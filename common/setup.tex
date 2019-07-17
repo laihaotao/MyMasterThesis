@@ -1,0 +1,104 @@
+\usepackage[latin1]{inputenc}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{latexsym}
+\usepackage{makeidx}
+\usepackage{style/cuthesis}
+\usepackage{style/named}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{amsthm}
+%\usepackage{empheq}
+\usepackage{caption}
+\usepackage{fullpage}
+\usepackage[colorlinks,linkcolor=blue,urlcolor=blue,citecolor=blue]{hyperref}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{setspace}
+	\usepackage[%
+		lmargin=1.5in,
+		rmargin=1.0in,
+		tmargin=1.0in,
+		bmargin=1.0in,
+		%includefoot
+		]{geometry}
+\usepackage{fancyhdr}
+\usepackage[nottoc, notlof, notlot]{tocbibind}
+\usepackage{minitoc}
+\usepackage[intoc]{nomencl}
+\setcounter{minitocdepth}{2}
+\mtcindent=15pt
+\hyphenpenalty 5000
+\tolerance=10000
+
+% Common commands
+%
+\input{common/commands}
+
+\lstdefinestyle{codeStyle}{
+    captionpos=b,%
+    showstringspaces=false,%
+    showspaces=false,
+    frame=single,  %use this to have a box around the code
+    %frame=htb, framerule=1pt, %Use this to have only top and bottom frames
+    extendedchars=true,%
+%    basicstyle=\tiny\tt, %use this for the smallest characters
+    basicstyle=\scriptsize\tt, %use this for small, but not that small characters
+    %basicstyle=\footnotesize\tt, %use this for normal, yet smaller characters
+    linewidth=1\linewidth,%
+%    language=[ANSI]C,%
+    language=Java,%
+    breaklines=true,
+    float=phtb,  %change this to change where the floats end
+%------------ Uncomment to make more compact
+%    aboveskip=6pt,
+%    belowskip=0pt,
+%    abovecaptionskip=0pt,
+%    belowcaptionskip=0pt
+}
+
+% Number all sections, but include only section and subsections in the ToC.
+%\setcounter{secnumdepth}{4}
+%\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+%
+% Top heading
+%
+%	\begin{figure}
+%		\includegraphics[width=20pt]{gipsystar}
+%	\end{figure}
+\setcounter{topnumber}{9}
+\setcounter{bottomnumber}{9}
+\setcounter{totalnumber}{20}
+\setcounter{dbltopnumber}{9}
+
+\usepackage{amsmath}
+%\usepackage{enumitem}
+%\setitemize{noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+%\setlength\parindent{0pt}
+\usepackage{pdflscape}
+% algorithm 
+\usepackage[ruled,vlined,linesnumbered,resetcount]{algorithm2e}
+\DontPrintSemicolon 
+\newcommand{\AlgoResetCount}{\renewcommand{\@ResetCounterIfNeeded}{\setcounter{AlgoLine}{0}}}
+\newcommand{\AlgoNoResetCount}{\renewcommand{\@ResetCounterIfNeeded}{}}
+\newcounter{AlgoSavedLineCount}
+\newcommand{\AlgoSaveLineCount}{\setcounter{AlgoSavedLineCount}{\value{AlgoLine}}}
+\newcommand{\AlgoRestoreLineCount}{\setcounter{AlgoLine}{\value{AlgoSavedLineCount}}}
+\makeatother
+
+% set the autoref to capital letter
+\usepackage[english]{babel}
+\usepackage{hyperref}
+\addto\extrasenglish{%
+	\def\chapterautorefname{Chapter}%
+	\def\sectionautorefname{Section}%
+	\def\subsectionautorefname{Section}%
+	\def\subsubsectionautorefname{Section}%
+	\def\paragraphautorefname{Paragraph}%
+	\def\subparagraphautorefname{Subparagraph}%
+	\def\algorithmautorefname{Algorithm}%
+}

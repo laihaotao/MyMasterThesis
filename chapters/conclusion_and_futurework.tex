@@ -1,0 +1,201 @@
+\chapter{Conclusion and Future Work}
+\label{chap:Conclusion}
+\index{Conclusion and Future Work}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+In this chapter, we summarize what we have been done within this
+thesis, and acknowledged the known limitations we have currently.
+At the end, we point out some potential research paths for other
+researchers who would like to work on top this thesis.
+
+
+\section{Summary}
+\label{sec:Conclusion-summary}
+
+We have shown, through the result of our evaluation \autoref{chap:Evaluation}
+and the design and implementation of our solution
+\autoref{chap:Design-and-Impl}, that
+\textbf{
+our framework solution for tracking person cross multiple cameras by employing
+deep learning-based person re-identification model allow us to achieve the goal
+we have previously laid out in \autoref{sec:intro-mot-goal}
+}.
+It will effectively enable us to break the restriction we mentioned in
+\autoref{sec:intro-lim-issv2}, we will have a much larger stage coverage rate than
+what we have before. Also, a range of devices from various brands can be
+activated for our production.
+Secondly, for the community of depth sensing, our solution provides a set of
+unified APIs to access different sensors with a good extensibility, usability
+and maintainability.
+Thirdly, for the computer vision community, we give a try to compile the result
+from object detection and person re-identification into a unified pipeline with
+the real-time requirement and the result seems can satisfied our demand.
+At the end, we plan to make our framework solution including the training and
+testing parts of the deep learning-based model publicly available. And we will
+keep maintain and update the framework to make it more powerful and useful.
+
+Specially, we give the background of our research in
+\autoref{sec:intro-background}, and explain the pain points experienced when we
+were using our previous work in \autoref{sec:intro-lim-issv2}, then we stated our
+research problems in \autoref{sec:intro-pbstat}. Existing methods
+and available software which related to our research are represented in
+\autoref{chap:RelatedWork}. By analyzing the goal and requirements described in
+\autoref{sec:intro-mot-goal}, \autoref{sec:intro-scen-req} and
+\autoref{sec:intro-non-func-req}, our framework solution is proposed in
+\autoref{sec:Impl-fw-core} and \autoref{sec:Impl-fw-specilized}. The core modules of
+our proposed framework are fully explained in \autoref{sec:Impl-fw-modules}.
+The most essential components like person detection and re-identification, we
+give clear objectiveness evaluation with theoretical details in
+\autoref{sec:Eval-reid-app}. For the modules cannot be measured quantitatively, we
+give subjectiveness evaluation in \autoref{sec:Eval-framework} with our framework's
+sample applications which are introduced in \autoref{sec:Impl-fw-app-other}.
+
+\textbf{To sum up, in this thesis, we implement a framework that can provide
+device abstraction as well as other infrastructure and a model can achieve
+about 90\% top 1 accuracy in ReID task. Then integrate the model into a
+pipeline under this framework to perform pedestrian detection and person
+re-identification in real time.}
+
+\section{Limitations}
+\label{sec:Conclusion-limitation}
+
+Even though the proposed solution in this thesis reach the goal we setup in
+\autoref{sec:intro-mot-goal} and fulfill the requirement we listed in
+\autoref{sec:intro-scen-req}, we have to admit that there are still a few
+limitations exist currently in our solution.
+
+\begin{itemize}
+	\item Our ReID application currently requires us to prepare database images
+	in advance and put them under a specific directory. There is no interface
+	for user to capture database image on-the-fly.
+
+	\item Our green screen application currently need the user to select the
+	filtering distance. Since we already have skeleton tracking, if we can
+	combine them together we actually can achieve green screen automatically by
+	making use of the depth values we get from the joint pixels.
+
+	\item Our cameras calibration application now can only calibrate the color
+	image, but most of the depth sensor have and IR camera. Since the image
+	captured by the IR cameras is too bright that the corner detector cannot
+	find the target easily. We should either add pre-processing step in order
+	to get usable image or create different methods to calibrate the IR camera
+	because the intrinsic and extrinsic matrices are useful for image alignment.
+
+	\item Our current skeleton tracking application is based on a third-party
+	library, we don't have skeleton extraction algorithm based on our
+	framework's common data structure yet. It will restrict us that the
+	skeleton tracking application can only apply to a subset of cameras which
+	is not our original goals.
+
+	\item Our current ReID model mostly based on the appearance of the detected
+	person, with such a model, it can work fine on the normal environment. But
+	when put it under some special environments like no or only few light or
+	tracking object which moves in a high speed. Our model may likely fail.
+
+	\item Our ReID model currently is trained on a single dataset which make a
+	lot of sense in academic research. But as a engineering production we
+	actually focus on the performance which can be improved if we train the
+	model on multiple dataset jointly to learn more generic features.
+
+	\item Our framework requires a lot of dependencies, the environment
+	configuration process for the framework developer is currently a little bit
+	painful. We may need to develop some tools or scripts to help with the
+	configuration.
+\end{itemize}
+
+\section{Future Work}
+\label{sec:Conclusion-future-work}
+
+The research presented in this thesis actually is just the starting point of
+the OpenISS framework. The final goal is to make it can not only support our
+real-time performance production but also can serve as a research platform for
+people in computer vision, pattern recognition, deep learning and game
+development. Below, we list some additional features that we are working on or
+plan to work on.
+
+\textbf{Java API wrapper:} As discuss in \autoref{sec:Impl-fw-cross-lang}, our
+framework was written in C/C++, but our production ISSv2 was written in Java
+and on top of Processing. In order to use OpenISS as the new back-end, we have
+to provide a Java wrapper for our APIs. This work is ongoing and partially done
+by our labmates Yuhao Mao, Jashanjot Singh and Chao Wang.
+
+\textbf{More devices support:} At this moment, we only support three kinds of
+device. But we always keep our eyes on the market, recently the new version of
+Kinect named Azure Kinect has been released, as well as two new cameras named
+D435i and T265 from RealSense.
+At the same time, RealSense also include OpenNI2 into their SDK which enable us
+to apply our skeleton tracking implementation described in
+\autoref{sec:Impl-fw-app-skt} on all the RealSense cameras.
+
+\textbf{Comparison platform: } One of our goal is to make OpenISS can serve as
+an algorithms comparison framework which define a bunch of metrics for various
+research problem accordingly and enable the users to compare different
+algorithms under the single-variable-setting. Currently, we have CMC and mAP
+metrics for ReID task, we already achieved cross datasets validation. We still
+plan to add more support for other tasks.
+
+\textbf{Full-platform support:} Currently, our framework only work with Linux
+(Ubuntu distribution) and MacOS (without GPUs features, that is due to the
+hardware and their drivers limitation). We plan to add full support for Windows
+since it still the most popular OS in the world and most of our dependencies
+can be ported to it now.
+
+\textbf{Auto installation:} The installation process our the framework
+currently is manually and a little bit tricky. Some efforts have been made to
+it but only for Ubuntu System. We plan to script the installation process in
+CMake to enable dependencies downloading, building and installing automatically
+for all platforms.
+
+
+% EOF
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,62 @@
+%-- 
+\documentclass[letterpaper,12pt]{report}
+%
+%**** Import packages setup. 
+\input{common/setup}
+% Make the list of abreviations.
+\makenomenclature
+\makeindex
+ 
+%%
+%% Authorship
+%%
+\author{Haotao Lai}
+\title
+{
+	An ISS Framework Specialization for Person Re-identification
+}
+\degree{Master of Science (Computer Science)}
+\dept{Computer Science and Software Engineering}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%% <Thesis Header> %%%%%%%%%%%%%%%%%%%%%%%%
+\input{abstract/abstract}
+\input{common/acknowledgments}
+ 
+ 
+%%%%%%%%%%%%%%%%%%%% <Thesis Body>   %%%%%%%%%%%%%%%%%%%%%%%%
+%-- Abbrs.
+%\input{abbr/abbrs}
+%\printnomenclature
+
+\input{chapters/introduction}
+\input{chapters/related_work}
+\input{chapters/framework_design}
+\input{chapters/framework_instantiation}
+\input{chapters/framework_application}
+\input{chapters/result_and_evaluation}
+\input{chapters/conclusion_and_futurework}
+
+%-- References 
+%\addcontentsline{toc}{chapter}{Bibliography}
+%\label{chapt:bibliography}
+%\bibliographystyle{alpha}
+%\bibliographystyle{plain}
+%\bibliographystyle{named}
+%\bibliographystyle{ieeetr}
+%\bibliographystyle{apalike}
+\bibliographystyle{acm}
+\bibliography{references/bibliography}
+
+
+
+%-- Appendix chapters.
+%\input{appendix/appendix}
+
+%-- Build the index list.
+%\addcontentsline{toc}{chapter}{Index}
+%\printindex
+
+\end{document}
+% EOF

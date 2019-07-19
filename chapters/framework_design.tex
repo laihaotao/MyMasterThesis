@@ -32,7 +32,7 @@ two components:
 \end{itemize}
 
 There are three key distinguishing features the make a framework different from
-the normal software libraries:
+normal software libraries:
 
 \noindent \textbf{Inversion of control:}
 In a framework, the program's flow of control, unlike in libraries or
@@ -40,22 +40,22 @@ applications, is not dictated by the caller but the framework.
 %
 In our case, since we want to address the person ReID problem (specified by
 \textbf{FR4} and \textbf{FR5}) which can be
-divided into two subproblems: person detection and person retrieval.
-The output from the former will be the input of the latter, from the user's
-point of view they are totally not interested in the intermediate result but
-want the final result directly. So the user doesn't have the knowledge and they even
+divided into two subproblems: person detection and person retrieval, which
+the output from the former will become the input of the latter. From the user's
+point of view, they are totally not interested in the intermediate steps but
+only want the final result. So the user doesn't have the knowledge and they even
 don't want to know how the data flow between these two subproblems and how the
-the device can obtain the raw data as well.
-The flow of control should actually be done by the framework since for a
-specific task, the workflow should be deterministic and the user just tells what
-they want to do but not how they do it. Under such consideration, having
-the program's flow predictable and controllable is extremely important for us.
+the device can obtain the raw data at the beginning as well.
+In this case, the flow of control of the program should actually be done
+by the framework since for a specific task, the workflow should be 
+deterministic and the user just tells what they want to do but not how they do 
+it. Under such consideration, having the program's flow predictable and 
+controllable is extremely important for us.
 
 \noindent \textbf{Non-modifiable framework code:}
 The framework code (aka. frozen spot), in general, is not supposed to be
-modified, while accepting user-implemented extension (hot spot). In other
+modified, but accept user-implemented extension (hot spot). In other
 words, users can extend the framework, but cannot change its code.
-%
 The reason why the frozen spot cannot be changed is that the framework is
 responsible for controlling the flow of the program, without knowing what
 kind of application the framework will be used for. The control flow is defined
@@ -63,38 +63,37 @@ by these frozen spots, if they are always changed then there is no way to
 achieve inversion of control.
 
 \noindent \textbf{Extensibility:}
-A user can extend the framework, usually by selective overriding or add
+A user can extend the framework, usually by selectively override or add
 specialized code to provide specific functionality.
-%
 As mentioned in \autoref{sec:intro-non-func-req}, extensibility is one of our
-non-functional requirement. Since we want to support various kind of cameras
+non-functional requirement. Since we want to support various kinds of cameras
 (specified by \textbf{FR1} and \textbf{FR2})
 and as introduced in \autoref{chap:RelatedWork} the algorithms for both person
 detection and person retrieval are diverse. It is possible that later on we may
-want to perform comparisons among these algorithms. With such design in advanced,
-we can save a lot of jobs for integration and it also makes our solution more
-valuable.
+want to perform comparisons among these algorithms. With such design in 
+advanced, we can save a lot of jobs for integration and it also makes our 
+solution more valuable.
 
-From the discussion above, we see that the key features of a software framework can
-perfectly fit to the demand of our solution. If we think in an abstract way,
-what our solution needs actually is to enable the definition of a pipeline.
-Every pipeline has the same structure:
+From the discussion above, we see that the key features of a software
+framework can perfectly fit to the demand of our solution. Further more,
+if we think of our main person re-identification scenario in an abstract way,
+what our solution needs actually is to enable the definition of a pipeline 
+which works in the way described below:
+
 \begin{enumerate}
-    \item Information is gathered by devices which can be diverse;
-
-    \item Information is transformed/extracted using filters, which can also be
-          diverse but must be made abstract so that they can easily
-          interoperate;
-
-    \item Every device and filtering algorithm comes with their own data model;
+    \item Information is gathered by devices which can be diverse.
+    \item Information is transformed/extracted using filters (person detector 
+    and person recognizer), which can also be diverse but must be made abstract 
+    so that they can easily interoperate.
+    \item Every device and filtering algorithm comes with their own data model.
 \end{enumerate}
 
 Interoperability comes through the definition of an abstract data
 structure that is exchanged between the abstractly defined filters. This way,
 various devices can be used in conjunction with various filtering algorithms to
 create an application. This is, in fact, a classic example of a problem solvable
-using a framework approach. So we decide to plan our solution in a framework
-manner.
+using a framework approach.
+So we decide to plan our solution in a framework manner.
 In our design, we have the core framework as the frozen spot which
 defines the infrastructure like device, cross-language calling mechanism and
 viewer.
@@ -115,40 +114,41 @@ specialized framework.
 For the five core frozen spots, their functionalities are designed as follows:
 
 \begin{itemize}
-    \item Device module: it provides an abstraction of various devices which
-    can be used by any application that needs depth cameras as input.
+    \item Device module: It provides an abstraction of various devices which
+    can be used by any application that needs cameras as input.
 
-    \item Cross-language module: it provides the ability that from C++ we can
+    \item Cross-language module: It provides the ability that from C++ we can
     invoke algorithms or models implemented in Python which can help us to make
     sure of most of the existing resources available from the community.
 
-    \item Pipeline module: it serves as an executor of the framework providing
+    \item Pipeline module: It serves as an executor of the framework providing
     the flow of control for a variety of tasks.
 
-    \item Common data structures: it provides our own framework data structures
+    \item Common data structures: It provides our own framework data structures
     which were adapted from other low-level libraries or software enabling us
     to perform our own algorithm independently.
 
-    \item Viewer module: it provides visualization abstraction of the framework
-    can be used by any application that needs to show the result visualized
-    (e.g. display result image).
+    \item Viewer module: It provides visualization abstraction of the framework
+    which can be used by any application that needs to display result.
 \end{itemize}
 
 For the three specialized frameworks, they are designed to:
 
 \begin{itemize}
-    \item Tracker specialized frameworks: it provides the abstraction of a tracker,
-    in the context of motion capture, computer vision or image processing,
-    which takes a frame from a sequence of images and a set of given pixels as
-    input. Then for all the remaining frames in the sequence keep tracking
-    location of the same set of pixels that have the same meaning.
+    \item Tracker specialized frameworks: It provides the abstraction of a 
+    tracker, in the context of motion capture, computer vision or image 
+    processing, which takes a frame from a sequence of images and a set of 
+    given pixels as input. Then for all the remaining frames in the sequence, 
+    it keeps tracking the location of a same set of pixels that have the same 
+    meaning.
 
-    \item Detector specialized frameworks: it provides the abstraction of a
+    \item Detector specialized frameworks: It provides the abstraction of a
     detector, in the context of computer vision, which takes an image and an
     object class list (e.g. cat, dog, person, car) as input then output a
-    bounding box for each detected object instance within the given list.
+    bounding box for each detected object instance within the image respect to 
+    the given object list.
 
-    \item Recognizer specialized frameworks: it provides the abstraction of a
+    \item Recognizer specialized frameworks: It provides the abstraction of a
     recognizer, in the context of computer vision, which takes an image (can be
     a pedestrian or a face image) or video (a video with facial expression or
     gesture) as input then output whether this image or video have been seen
@@ -164,8 +164,8 @@ For the three specialized frameworks, they are designed to:
     \label{fig:fw-core-module}
 \end{figure}
 
-In the following paragraphs, we are going to explain the design of the core part of
-each module within the core framework.
+In the following paragraphs, we are going to explain the design of each module 
+within the core framework.
 
 \subsection{Device Module}
 \label{sec:fw-design-core-device}
@@ -239,13 +239,14 @@ in \texttt{OIDevice} class:
 \label{sec:fw-design-core-cross-lang}
 
 As mentioned in \autoref{sec:related_work_obj_det} and
-\autoref{sec:related_work_re_id}, since 2012, deep learning approach dominates the
-research community of both object detection and person re-identification.
+\autoref{sec:related_work_re_id}, the research community of both 
+object detection and person re-identification have been dominated by deep 
+learning approach since 2012.
 Nowadays most of the available deep learning frameworks provide Python APIs for
 convenient purpose, even though themselves were written in C/C++, developing
 deep learning program directly using low-level APIs makes the works tedious and
 problematic.
-In order to address this issue, we design the cross-language module shown as
+In order to address this issue, we design a cross-language module shown as
 \autoref{fig:fw-core-cross-lang} which
 enable the user to separate deep learning oriented program development from the
 normal programming task. Our OpenISS framework itself is written in C/C++ (the
@@ -276,16 +277,16 @@ core functions \texttt{initPyWorkingPath}, \texttt{createPyInstance},
 add a given path to the Python interpreter as a working path (Python will search
 the requested module under all the working paths), create an object of a given
 class which is visible within the encapsulated Python script, load (without
-execute) the handler of a specified method which is visible from that file and
+executing) the handler of a specified method which is visible from that file and
 invoke a loaded function using its handler.
 
-The design and usage philosophy of this module illustrated by
-\autoref{fig:fw-core-cross-lang2} is that each instance of \texttt{OIPythonEnv}
-can be used for representing a Python file (the box in green), a framework
+The design and usage philosophy of this module can be illustrated by
+\autoref{fig:fw-core-cross-lang2}. Each instance of \texttt{OIPythonEnv}
+can be used to represent a Python file (the box in green), a framework
 developer trained, in our case, a deep learning model in Python (the red box)
 and would like to expose some of the functionalities of it to the framework
 users. Then they can write a C/C++ wrapper (the blue box) for it which
-contains a member variable of type \texttt{OIPythonEnv} instantiating with the
+contains a member variable of type \texttt{OIPythonEnv} instantiated by the
 names of classes and functions would like to expose. The framework users then
 can use the Python code via our framework without knowing anything about Python
 under the hood.
@@ -308,8 +309,9 @@ under the hood.
 \end{figure}
 
 The pipeline module, as its name implies, provides a pipeline execution
-mechanism to the framework users. It allows the user to chain multiple
-components together that the former's output will become the latter's input.
+mechanism for the framework users. It allows the user to chain multiple
+filters together that the former's output will become the 
+latter's input (no need the right before/after one).
 When all these filters finish execution, we can achieve some specific goal, for
 example, our final goal, tracking person across multiple cameras (detail will
 be explained in \autoref{chap:fw-app}).
@@ -318,25 +320,25 @@ The design of the module can be described by the UML diagram shown as
 \autoref{fig:fw-core-pipeline-uml}. The \texttt{OIPipeline} class contains a
 list of filters and a reference with type \texttt{OIFlowContext} which is an
 abstract class used to define the save and query behaviors of the temporary
-result generated from the intermediate filter. The \texttt{push} method is used
+result generated by the intermediate filters. The \texttt{push} method is used
 to add a concrete filter into the pipeline while the \texttt{flow} method is the
 switch to trigger the pipeline execution process.
-The component which would like to serve as a filter must implement the
+The component which would like to serve as a filter must agree with the
 \texttt{OIFlowable} contract. There are three functions defined within this
 interface:
 
 \begin{itemize}
-    \item \texttt{flow}: it takes a reference of \texttt{OIFlowContext} as
+    \item \texttt{flow}: It takes a reference of \texttt{OIFlowContext} as
     parameter, basically what this function does is calling the real logic
     method. For example, the \texttt{flow} function will call the
     \texttt{readFrame} function within \texttt{OIDevice}, the \texttt{detect}
     function within \texttt{OIDetector} and the \texttt{predict} function
     within \texttt{OIRecognizer}.
 
-    \item \texttt{type}: it just returns the type of the filter itself, we may
+    \item \texttt{type}: It just returns the type of the filter itself, we may
     need it to differentiate some operations for various filters.
 
-    \item \texttt{check}: it usually gets called before \texttt{flow} method,
+    \item \texttt{check}: It usually gets called before \texttt{flow} method,
     we perform necessary checking step here to ensure all the needed data are
     available before \texttt{flow} get executed.
 \end{itemize}
@@ -431,7 +433,7 @@ same time.
 The method \texttt{show} contains the logic for various libraries for
 drawing. Currently, our framework only has one concrete implementation which
 is \texttt{OIOpenCVViewer} based on the OpenCV library.
-The \texttt{OIOpenGLViewer} implementation was designed but is still under
+The \texttt{OIOpenGLViewer} was designed but it is still under
 development.
 
 \begin{figure}
@@ -444,6 +446,7 @@ development.
 \section{Specialized Framework Design}
 \label{sec:fw-design-spec}
 
+% todo: 不应该讨论 chainable 这里，因为这些 specialized framework 不能 chain 在一起
 The specialized framework is designed for solving a class of specific problems,
 it provides a set of unified APIs to the framework users just like other
 modules within the core framework but also defines the problem-specific data
@@ -456,7 +459,7 @@ specialized frameworks, since normally a large problem can be divided into
 several subproblems, we believe that the combination of these specialized
 frameworks may be able to solve more complex problems so we decide to make the
 specialized framework chainable. Finally, the data will be converted into the
-user's expected format and reach the end-user's application.
+user's expected format and reaches to the end-user's application.
 
 \begin{figure}
     \centering
@@ -509,12 +512,12 @@ it will be updated per frame time.
 \subsection{Detector Specialized Framework Design}
 \label{sec:fw-design-spec-detector}
 
-As mentioned in \autoref{sec:intro-pbstat}, our research problem can be divided
-into two parts and one of them is object detection, more precisely, pedestrian
-detection. So it is necessary to design a specialized framework for it. Since
+As mentioned in \autoref{sec:intro-pbstat}, the ReID problem 
+can be divided into two parts and one of them is object detection, so it is 
+necessary to design a specialized framework for it. Since
 we are designing a framework, in order to maintain its abstractness and
 extensibility, we need to extract the common parts of different kinds of
-detector and provide an abstraction of them.
+detector then provide an abstraction of them.
 Recap the definition of object detection we gave in \autoref{sec:intro-pbstat},
 given an image $I$ and a list of objects $C$, the output will be a list of
 bounding box $B$ which contains the instances of objects listed in $C$.
@@ -551,10 +554,9 @@ factory's function named \texttt{create}. It will return a reference with type
 \subsection{Recognizer Specialized Framework Design}
 \label{sec:fw-design-spec-recognizer}
 
-As mentioned in \autoref{sec:intro-pbstat}, our research problem can be divided
+As mentioned in \autoref{sec:intro-pbstat}, ReID task can be divided
 into two parts and we already explained object detection in the previous
-section then the other one is object retrieval, more precisely, person
-retrieval.
+section then the other one is object retrieval.
 In other words, you are given a set of gallery images with their identities in
 advanced. Then for a never seen query image, the recognizer is expected to tell
 its identity among the gallery images.
@@ -566,14 +568,15 @@ first step, of course, is that we need to create a database. According to our
 definition, a database is a hashmap where the key is the identity string and
 the value is a descriptor represented by the class \texttt{OIDescriptor}
 computed from the source (e.g. an image or a video).
-Inside the \texttt{OIDescriptor} class, the variable \texttt{srcPath} point to
+Inside the \texttt{OIDescriptor} class, the variable \texttt{srcPath} points to
 the location of the source represented by this descriptor. The variable
 \texttt{features} means the feature vector of the content of the source and the
 variable \texttt{id} means the identity label.
 Feature is one of the most significant parts for recognition, the core idea of
 recognition is trying to find a way that can measure the distance between two
 features accurately and effectively. Since these features are high dimensional
-vector, it is hard to imagine and tell what kinds of metrics can perform better.
+vectors, it is hard to imagine and tell what kinds of metrics can perform
+better.
 Feature is represented by the class \texttt{OINdArray} within the recognizer
 specialized framework which encapsulates an N-dimensional array.
 \texttt{OIRecognizerFactory} works exactly the same as its sibling within
@@ -581,16 +584,16 @@ the detector framework, we will omit the explanation for it here.
 Finally, we reach the frozen spot of the recognizer representing by the class
 named \texttt{OIRecognizer}. It has a variable name \texttt{database} which
 holds all the pre-defined identities and three functions.
-\texttt{attachDatabase} is easy to understand, as its name implies, it is used
-to attach the database to the recognizer.
-\texttt{lookupDatabase} defines how to look up the possible result
+Method \texttt{attachDatabase} is easy to understand, as its name implies, it 
+is used to attach the database to the recognizer.
+Method \texttt{lookupDatabase} defines how to look up the possible result
 with a given descriptor in hand among the database.
-\texttt{predict} is the method the user needs to invoke, it takes one parameter
-typed \texttt{OIFrame} which is the image contains the targeted item.
+Method \texttt{predict} is one that user needs to invoke, it takes one 
+parameter typed \texttt{OIFrame} which is the image contains the targeted item.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\linewidth]{figures/framework_sub_recognizer.pdf}
+    \includegraphics[scale=0.8]{figures/framework_sub_recognizer.pdf}
     \caption{Design of the OpenISS recognizer specialized framework.}
     \label{fig:fw-sub-recognizer}
 \end{figure}
@@ -598,11 +601,11 @@ typed \texttt{OIFrame} which is the image contains the targeted item.
 \section{Summary}
 \label{sec:fw-design-summary}
 
-In this chapter, we introduced the design of our framework. Began with how
-the framework solution can fulfill the requirement. Followed by the way how we
+In this chapter, we introduced the design of our framework. Began with why
+we choose the framework solution. Followed by the way how we
 structure the framework, we logically split the whole solution into two parts,
 one sever as infrastructure called core framework and the other one is
-responsible for a specific task called specialized framework, in our design,
+responsible for specific tasks called specialized framework, in our design,
 there can be multiple independent specialized frameworks.
 Then we explained the design of each module (aka. frozen spot) within both the
 core and specialized frameworks. In the next chapter, we are going to describe

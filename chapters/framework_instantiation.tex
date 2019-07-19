@@ -3,16 +3,11 @@
 \index{Framework Instantiation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 这章怎么写？
-% - 技术选型：语言，分层，项目结构
-% - 每一个 module \ specialized framework 的实例化:
-%     device, tracker, detector, recognizer
 
 In this chapter, we are going to describe in detail how we create an instance
 of the framework we proposed in \autoref{chap:fw-design}. We start with the
-implementation decisions by explaining why we choose the selected techniques to
-build our framework followed by the project structure used during the
-implementation time.
+implementation decisions by explaining why we choose the selected techniques
+followed by the project structure used during the implementation time.
 Then for each frozen spot introduced in \autoref{sec:fw-design-core} and
 \autoref{sec:fw-design-spec}, we describe our instantiation process and the
 essential implementation detail.
@@ -22,9 +17,9 @@ essential implementation detail.
 \label{sec:fw-inst-impl}
 
 In \autoref{sec:fw-design-why}, we stated why choosing the framework
-solution. For a specific programming problem, if we just want to solve it and
-only it directly, what we need maybe just a piece of program. But if we want to
-provide a solution in general, it may require extra work and become more
+solution. For a programming problem, if we just want to solve it and only it 
+specifically, what we need may be just a piece of program. But if we want to
+provide a solution in general, it may require extra works and become more
 complex. The framework approach aims at providing a general solution, so for
 sure its complexity is higher and its development will become more difficult
 than the usual approach.
@@ -45,8 +40,8 @@ C++ in the following aspects:
 
 \begin{itemize}
     \item Utilizes the existing software maximally.
-    \item Obtains faster speed most of the other programming languages since it
-    is closer to the hardware.
+    \item Obtains faster speed than most of the other programming languages 
+    since it is closer to the hardware.
     \item Relatively easier to communicate with other languages since a lot of
     programming language itself were written in C/C++.
 \end{itemize}
@@ -67,8 +62,8 @@ concept of software layers. Software layers are where each ``layer" of a system
 deals with a certain function of a system which, usually, gets more and more
 detailed as you burrow down into the layer stack. In our implementation, to separate the responsibility of different modules and specialized
 frameworks, we proposed a three-layer software model shown as
-\autoref{fig:fw-layers} and assign proposed and designed components into a
-corresponding layer according to their functionalities, the description of each
+\autoref{fig:fw-layers} and assign components into
+corresponding layers according to their functionalities, the description of each
 layer can be found in \autoref{tab:desc-layer}. With stated logical separation,
 in our implemented code base, we also need to structure our code clear and
 maintain the modularity of our design. For this purpose, we employ a project
@@ -115,18 +110,18 @@ directory structure shown as \autoref{tab:fw-dir}.
     \begin{tabular}{ll}
         \hline
         Directory Name &
-        Functionality
+        Description
         \\ \hline
-        src       & contains all the source code of the framework itself
+        src       & Contains all the source code of the framework itself
         \\ \hline
-        samples   & contains all the source code of the application level
+        samples   & Contains all the source code of the application level
                     samples
         \\ \hline
-        modules   & contains custom cmake modules for building the framework
+        modules   & Contains custom cmake modules for building the framework
         \\ \hline
-        python    & contains all the python modules using by the framework
+        python    & Contains all the python modules using by the framework
         \\ \hline
-        script    & \begin{tabular}[c]{@{}l@{}}contains all necessary
+        script    & \begin{tabular}[c]{@{}l@{}}Contains all necessary
                     scripts (e.g. download datasets, \\ configure environment)
                     \end{tabular}
         \\ \hline
@@ -138,22 +133,23 @@ directory structure shown as \autoref{tab:fw-dir}.
 \section{Core and Specialized Framework Instantiation}
 \label{sec:fw-inst-core-and-spec}
 
-In this section, we describe how we create hot spot for those frozen spots
+In this section, we describe how we create hot spots for those frozen spots
 introduced in \autoref{sec:fw-design-core} and \autoref{sec:fw-design-spec},
 the augmented architecture diagram shown as \autoref{fig:fw-inst}.
 
-For the device module in the core framework, we describe how we instantiate it to
-support three different kinds of depth cameras.
-For detector specialized framework, we describe what kind of modification we
+For the device module in the core framework, we describe how we instantiate it 
+to support three different kinds of depth cameras.
+For the detector specialized framework, we describe what kind of modification we
 made and how we train the YOLO model introduced in
 \autoref{sec:related-worked-yolo} and integrate it into our solution as a
 detector framework instance.
-For recognizer specialized framework, we describe how we train a ReID network
-which is a combination of the identification model and triplet model explain in
-\autoref{sec:related-work-re-id-idm} and \autoref{sec:related-work-re-id-dism}.
-For tracker specialized framework, we describe how we instantiate it with the
-existing NiTE2 introduce in \autoref{sec:related_work_openiss_nite2}
-implementation.
+For the recognizer specialized framework, we describe how we train a person 
+ReID network which is a combination of the identification model and triplet 
+model explain in \autoref{sec:related-work-re-id-idm} and  
+\autoref{sec:related-work-re-id-dism}.
+For the tracker specialized framework, we describe how we instantiate it with 
+the existing NiTE2 middleware introduced in 
+\autoref{sec:related_work_openiss_nite2} implementation.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/framework_inst.pdf}
@@ -164,20 +160,20 @@ implementation.
 \subsection{Device Module Instantiation}
 \label{sec:fw-inst-device}
 
-In \autoref{sec:fw-design-core-device}, we describe the design of the device
+In \autoref{sec:fw-design-core-device}, we described the design of the device
 module within the core framework. To enable our framework to work with
-real cameras, we have to instantiate the framework by creating a hot spot for this
-device's frozen spot.
+real cameras, we have to instantiate the framework by creating a hot spot for 
+the device's frozen spot.
 Currently, we plan to support three kinds of devices: Kinect v1, Kinect v2 and
-RealSense D435 cameras. These devices come from different manufacturers
-supported by various hardware drivers. To combine them within a same set of
+RealSense D435. These devices come from different manufacturers
+supported by their own hardware drivers. To combine them within a same set of
 APIs, the idea can be illustrated by \autoref{fig:fw-inst-device}. For each
 kind of device, we create a concrete class, in our case, will be the class
 \texttt{OIKinect} and \texttt{OIRealSense} to wrap the concrete implementation
 of the defined functions within the \texttt{OIDevice} abstract class explained
 in \autoref{sec:fw-design-core-device}.
 Then because of the factory design pattern, what the framework users get from
-the factory is a reference of type \texttt{OIDevice}, so they can obtain the
+the factory is a reference with type \texttt{OIDevice}, so they can obtain the
 ability accessing the same function definition but with different implementation
 from the dynamic dispatch mechanism.
 
@@ -199,41 +195,41 @@ from the dynamic dispatch mechanism.
 \end{figure}
 
 In \autoref{sec:fw-design-spec-detector}, we proposed the design of frozen spot
-for detector specialized framework in general. To achieve person
+for a detector specialized framework in general. To achieve person
 detection to fulfill our requirement, based on the detector frozen spot, we
 create a deep learning-based pedestrian detector hot spot. The overall idea
 shown as \autoref{fig:fw-inst-detector}.
 
-We develop an concrete class \texttt{OIPedestrianDetector} which extends the
-abstract class \texttt{OIDetector}, serving as a wrapper of the concrete deep
-learning-based Python implementation of the YOLO detector by using the
-cross-language module introduced in \autoref{sec:fw-design-core-cross-lang} from
-the core framework. From the user aspect, they don't need to worry about the
-how the framework work with various detectors, but only need to know
-the usage of them. For specialized framework developers, with such design, they
-don't need to know how the cross-language works as well, but passing the
-requested methods or classes name to the \texttt{OIPythonEnv}, the
-cross-language module will handle it for you. It simplifies a lot of works
+We develop a concrete class \texttt{OIPedestrianDetector} which extends the
+abstract class \texttt{OIDetector}, serving as a wrapper of the concrete Python
+implementation of the YOLO detector. The communication happened here between
+C++ and Python is enable by the cross-language module introduced in
+\autoref{sec:fw-design-core-cross-lang} from the core framework.
+From the users aspect, they don't need to worry about the
+how the framework work with various other detectors, but only need to know
+the usage of them. For the specialized framework developers, 
+with such design, they don't need to know how the cross-language works as well, 
+but passing the requested methods or classes name to the \texttt{OIPythonEnv}, 
+the cross-language module will handle it for you. It simplifies a lot of works
 effectively improving the development process of both the applications and
 framework itself.
 
 We previously described the big picture of the detector specialized framework.
 In the following paragraph, we will explain in detail how we implement the YOLO
 model and reduce its scope from object detection to person detection.
-Recap the background \autoref{sec:intro-background} and requirement
-\autoref{sec:intro-mot-goal} we have, since we are doing performance on the
-stage, real-time data processing is extremely important for our application.
-According to \autoref{sec:related_work_obj_det} we know that
-two stages detector cannot achieve real-time (can only 5 FPS) so our
-selection for object detection model only left with the one-stage detector.
-In this thesis, we take \cite{yolov3-keras-github} as a reference and trainer
-code base, re-implement our version of the model since we want to adapt it to
-our framework but using the facilities they provide to re-train the
-model.
-The reason why we want to re-train is that the existing YOLO implementations
-are used for object detection rather than person detection.
+%Recap the background \autoref{sec:intro-background} and requirements
+%\autoref{sec:intro-mot-goal} we have, since we are doing performance on the
+%stage, real-time data processing is extremely important for our application.
+%According to \autoref{sec:related_work_obj_det} we know that
+%two stages detector cannot achieve real-time (can only 5 FPS) so our
+%selection for object detection model only left with the one-stage detector.
+In this thesis, we take \cite{yolov3-keras-github} as a reference and training
+facility, re-implement our version of the model since we want to adapt it to
+our framework but use the trainer they provided to re-train the model.
+The reason why we need to re-train is that the existing YOLO implementation
+is used for object detection rather than person detection.
 The difference between them is that if you want to make your model be able to
-detect more classes of objects the more training and inference time you need to
+detect more classes of objects the more training time you need to
 pay as well as memory space. Since we want to integrate two deep learning-based
 approaches (detection and re-identification) in real-time, in such a context,
 both time and space complexity are essential to us.
@@ -246,9 +242,9 @@ both time and space complexity are essential to us.
 
 In our implementation, we follow exactly the same network architecture proposed
 in \cite{yolov3-paper-2018} illustrated by \autoref{fig:fw-detector-archit}.
-Since we already have tons of pre-trained YOLO model, we are not going to train
-a new YOLO model from scratch, but perform some fine-tuning processes on a
-pre-trained model to get one which fit our need.
+Since there are already tons of pre-trained YOLO model exist, we are not going 
+to train it from scratch, but perform some fine-tuning processes 
+on a pre-trained model to get the one which can fit to our need.
 The full tuning process we employed can be described by the following steps:
 
 \begin{enumerate}
@@ -259,35 +255,35 @@ The full tuning process we employed can be described by the following steps:
     set annotating the one with person(s) and extracting their corresponding
     bounding boxes information.
     \item Load the converted pre-trained weights then follow the methods
-    proposed in the original YOLO v3 paper \cite{yolov3-paper-2018} to fine-tune the model to obtain a person detector rather than an object
+    proposed in the original YOLO v3 paper \cite{yolov3-paper-2018} to 
+    fine-tune the model to obtain a person detector rather than an object
     detector.
 \end{enumerate}
 
-Since we reduce the complexity of an object detector to a pedestrian detector,
-we believe that could help to improve the detection speed. We are trying to
+Since we reduce the complexity of an object detector to a person detector,
+we believe that could help to improve the training speed. We are trying to
 provide a theoretical analysis to prove it.
 According to \cite{yolov3-paper-2018}, there are total 9 anchors which are
-obtained by applying K-means clusters for the
-training and 3 for each final feature map with the size $[13, 13, 255]$,
-$[26, 26, 255]$ and $[52, 52, 255]$ respectively. So we can calculate that we
-are going to have:
+obtained by applying K-means cluster algorithm during the training phase. 
+These 9 anchors can be divided into 3 groups, each of them is given to final 
+feature map with the size $[13, 13, 255]$, $[26, 26, 255]$ and $[52, 52, 255]$ 
+respectively. 
+So we can calculate that we are going to have:
 $13 \times 13 \times 3 + 26 \times 26 \times 3 + 52 \times 52 \times 3=10647$
 bounding boxes for each input image. For each bounding box, we need to compute
-a probability for each pre-defined classes then multiply the confidence score for
-this box to obtain the final score for one class illustrated by
+a probability for each pre-defined classes then multiply the confidence score 
+for this box to obtain the final score for one class illustrated by
 \autoref{fig:fw-detector-calc}. Take the VOC2012 dataset as
 an example, there is a total of 20 classes of object. So for each bounding box,
 there will be 20 times multiplication operations. Since we have 105647 boxes,
 then it will be $20 \times 10647 = 212940$ operations per input image.
 \textbf{
     But if we only care about the person we can reduce the 20 classes to 2
-    classes,
-    then the total calculation will be $2 \times 10647 = 21294$ which is
-    one-tenth
-    of the original one. This can also speed up the non-maximum suppression
-    (NMS)
-    process which could help to eliminate overlapping boxes.
+    classes, then the total calculation will be $2 \times 10647 = 21294$ which 
+    is one-tenth of the original one. 
 }
+This can also speed up the non-maximum suppression (NMS) process which could 
+help to eliminate overlapped boxes.
 In most of the deep learning problem where the training data is normally large,
 these modifications will significantly help to reduce the training time.
 
@@ -299,7 +295,7 @@ these modifications will significantly help to reduce the training time.
 
 Once we have the score for each interested class, we will (1) use a threshold to
 filter out the one with a lower score and (2) apply the NMS algorithm to
-eliminate the boxed with high ratio overlapped. Assume we still use the
+eliminate the boxes with high ratio overlapping. Assume we still use the
 VOC2012 dataset with 20 classes, since we have 10647 boxes, then the class score
 can form a $20 \times 10647$ (row $\times$ col) matrix. The procedure can be
 described in the following way and visualized by \autoref{fig:fw-detector-nms}.
@@ -341,7 +337,7 @@ to compare the input and the record within the database should be written in
 the method \texttt{lookupDatabase}. In this case, we are using a deep
 learning-based model, so what we need to is using the model to compute the
 descriptor for each given record and store them in the database then compare the
-distance between to descriptors, more detail can be found in
+distance between query and gallery descriptors, more detail can be found in
 \autoref{fw-recognizer-spec-inference}.
 
 \begin{figure}
@@ -351,13 +347,13 @@ distance between to descriptors, more detail can be found in
     \label{fig:fw-inst-recognizer}
 \end{figure}
 
-In order to keep the consistency with the pedestrian detector and fill the
-research gap described in \autoref{sec:related_work_openiss_tf}, our implementation
-of the recognizer is written in Python and built on top of TensorFlow and
-Keras.
+In order to keep the consistency with the person detector and fill the
+research gap described in \autoref{sec:related_work_openiss_tf}, our 
+implementation of the recognizer is written in Python and built on top of 
+TensorFlow and Keras.
 In the following paragraph, we will first introduce our network structure, then
-explain our training process which includes available dataset, data
-pre-processing, loss function,  optimizer and some important hyper-parameters.
+explain our training process which includes data pre-processing, loss 
+function,  optimizer and some important hyper-parameters.
 In the end, we will discuss the methodology which we used to perform inference
 by using the trained model.
 
@@ -381,73 +377,31 @@ by using the trained model.
 
 We implemented a network architecture shown as \autoref{fig:fw-reid-archit},
 which is a combination of the identification model and distance metric-based
-model mentioned in \autoref{sec:related_work_re_id}. It employs a Residual-50
+model mentioned in \autoref{sec:related_work_re_id}. It employed a Residual-50
 network as the feature extractor followed by a global average pooling layer
 (GAP) to flatten out the feature vector. Then in one branch, the extracted
-feature $f_t$ is sent to calculated the triplet loss while in
-the other branch to obtain $f_i$ after passing through a batch normalization
-layer (BN) to compute the identification loss. In the end, the fully connected
+feature $f_t$ was sent to calculate the triplet loss while in
+the other branch was used to obtain $f_i$ after passing through a batch 
+normalization layer (BN) to compute the identification loss. 
+In the end, the fully connected
 layer (FC) is responsible for classification during the training time.
 According to \cite{pcb-and-rpp-for-reid},
-if we get a higher spatial resolution before global pooling by changing the
-stride in the last convolutional layer from 2 to 1, which will not affect the
+if we can get a higher spatial resolution before global pooling by changing the
+stride in the last convolutional layer from 2 to 1, which would not affect the
 number of parameters, obvious improvement can be obtained. Because of that, we
 modified our ResNet50 accordingly. Like most of the deep learning tasks, our
-model was also initialized with the weights pre-trained on ImageNet
-classification task. From the implementation point of view, it is important
+model was also initialized with the weights pre-trained on ImageNet.
+From the implementation point of view, it is important
 to point out that when we are using any pre-trained weights, we need to make
 sure the input image respect to the format of the pre-trained model. In Keras,
 this can be done by invoking the \texttt{preprocess\_input} method within the
 pre-defined model package.
 
-%\subsubsection{Dataset}
-%\label{fw-recognizer-spec-dataset}
-%
-%Once we defined the network structure, the next step will be training the model
-%on the network. But before we do that, let's take a look to the public
-%available datasets in this domain. There are three datasets we are going to
-%introduce which are employed in our implementation, shown as
-%\autoref{tab:reid-dataset}. We provide an abstraction of the dataset
-%illustrated by \autoref{fig:fw-reid-dataset-uml} and currently encapsulate
-%these three to allow our ReID algorithm can be trained and validated on.
-%
-%\begin{table}
-%    \begin{center}
-%        \begin{tabular}{||c c c c c||}
-%            \hline
-%            dataset & subset & \# pids & \# images & \# cameras \\ [0.5ex]
-%            \hline\hline
-%            \multirow{3}{4em}{{\tiny Market1501}} & train & 751 & 12936 & 6 \\
-%            & query & 750 & 3368 & 6 \\
-%            & gallery & 751 & 15913 & 6 \\
-%            \hline
-%            \multirow{3}{4em}{{\tiny CUHK03-NP}} & train & 767 & 7368 & 2 \\
-%            & query & 700 & 1400 & 2 \\
-%            & gallery & 700 & 5327 & 2 \\
-%            \hline
-%            \multirow{3}{4em}{{\tiny Duke-MTMC}} & train & 702 & 16522 & 8 \\
-%            & query & 702 & 2228 & 8 \\
-%            & gallery & 1110 & 17661 & 8 \\
-%            \hline
-%        \end{tabular}
-%    \end{center}
-%    \caption{Statistic for three popular ReID datasets}
-%    \label{tab:reid-dataset}
-%\end{table}
-%
-%\begin{figure}
-%    \includegraphics[width=\linewidth]{figures/framework_reid_dataset_uml.png}
-%    \caption{UML diagrams of ReID dataset abstraction}
-%    \label{fig:fw-reid-dataset-uml}
-%\end{figure}
-
 \subsubsection{Training}
 \label{fw-recognizer-spec-train}
 
 As we can see from \autoref{fig:fw-reid-archit}, during the training, our model
-is guided by two loss functions: triplet loss
-%， center loss
-and ID loss.
+will be guided by two loss functions: triplet loss and ID loss.
 
 %\begin{equation}
 %    L = L_{triplet} + \beta L_{center} + L_{ID}
@@ -464,11 +418,11 @@ is the cross-entropy loss.
 %\norm{f_{t_j} - c_{y_i}}^2_2 $ represents the center loss
 %\cite{center-loss-2016}. In our implementation, $\beta$ is set to 0.0005.
 
-Since the training set is too large to fit into memory in one shot, the mini-batch
-training strategy is adopted. The sampling method proposed in
-\cite{in-defense-of-triplet-loss-for-reid-2017} is employed. For each
-mini-batch, we randomly select $P$ identities and for each identity random $K$
-images will be chosen. In our implementation,
+Since the training set is too large to fit into memory in one shot,
+the mini-batch training strategy was adopted as well as
+the sampling method proposed in \cite{in-defense-of-triplet-loss-for-reid-2017}.
+For each mini-batch, we randomly select $P$ identities and for each identity 
+random $K$ images will be chosen. In our implementation,
 $P$ is set to 16 and $K$ is set to 4, which makes the batch size to become 64.
 This work is done by the class \texttt{RandomSampler} whose UML diagram shown as
 \autoref{fig:fw-sampler-uml}.
@@ -477,8 +431,9 @@ In order to prevent overfitting and enhance the generalization ability of the
 model, a data augmentation technique named random erasing
 \cite{random-erasing-data-augmentation-2017} was applied to each image
 individually on-the-fly when constructing each mini-batch of data. Just like its
-name suggests, it will randomly replace a portion of the pixel's intensity within
-the image with some random values. Besides that three more steps pre-processing
+name suggests, it will randomly replace a portion of the pixel's intensity 
+within the image with some random values. 
+Besides that three more steps pre-processing
 were applied to enlarge the dataset. These pre-processing methods are commonly
 used in the image-based deep learning problem, they are implemented in the file
 named \texttt{preprocess.py}.
@@ -489,11 +444,11 @@ named \texttt{preprocess.py}.
     \item Flip the image horizontally with 0.5 probability
 \end{itemize}
 
-For the optimizer, we are using the build-in Adam algorithm provided by Keras
-but with warm-up learning rate setting \cite{learning-rate-warmup-2018},
-precisely, the learning rate is scheduled as \autoref{eq:reid-lr}, where $t$ is
-the current epoch. Last but not least, according to
-\cite{tricks-and-baseline-for-reid-2019} they trained their model for 120
+For the optimizer, we used the build-in Adam algorithm provided by Keras
+but with warm-up learning rate setting \cite{learning-rate-warmup-2018}.
+Precisely, the learning rate has been scheduled as \autoref{eq:reid-lr}, where 
+$t$ is the current epoch. Last but not least, according to
+\cite{tricks-and-baseline-for-reid-2019}, they trained their model for 120
 epochs and it is sufficient to obtain a good result. Also, from our training
 result shown by \autoref{fig:fw-training}, this number is enough for the
 model's convergence, so we set our total training epochs to 120 as well.
@@ -522,20 +477,20 @@ From the implementation point of view, the training program can be illustrated b
 variables and the structure of the model. Then we pass the configuration to the
 model, attach it with defined loss functions, optimizer and necessary
 callback functions then run the model in training mode. During the training
-time, the data will be retrieved from the dataset, sampling by the
-\texttt{Sampler}, applying data argumentation by \texttt{DataGen} and wrapping
+time, the data will be retrieved from the dataset, sampled by the
+\texttt{Sampler}, applied data argumentation by \texttt{DataGen} and wrapped
 up to be a Python generator object by \texttt{DataGenWrapper}.
+
+With these setting and after training, the result can be visualized by
+\autoref{fig:fw-training}, we can see clearly that the model starts to converge
+at around $50^{th}$ epochs. And from the training accuracy figure, we can find
+that there is a steep increase between $10^{th}$ and $20^{th}$ epochs.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/framework_reid_code_overview.pdf}
     \caption{Code structure of the ReID training program}
     \label{fig:fw-reid-code-overview}
 \end{figure}
-
-With the setting we defined above, the training result can be visualized by
-\autoref{fig:fw-training}, we can see clearly that the model starts to converge
-at around $50^{th}$ epochs. And from the training accuracy figure, we can find
-that there is a steep increase between $10^{th}$ and $20^{th}$ epochs.
 
 \begin{figure}
     \begin{subfigure}
@@ -591,7 +546,7 @@ If the reader wants to reproduce the result, attention need to be paid on one is
 that the dimension of $f_i^{query}$ and $f_i^G$ are different so when we try
 to feed the single query image into the model, we have to explicitly add one
 more axis to it.
-What's more is that, according to \autoref{eq:dis-comp},  $disatnce$ function is
+What's more is that, according to \autoref{eq:dis-comp},  $distance$ function is
 used to perform comparison between $f$ and $f_i^{query}$. The most popular
 distance function for two vectors comparison are: (1) euclidean distance and (2)
 cosine distance. According to \cite{tricks-and-baseline-for-reid-2019}, using
@@ -665,30 +620,6 @@ responsibilities listed below:
     \caption{How we instantiation tracker specialized framework.}
     \label{fig:fw-skeleton-tracker}
 \end{figure}
-
-% %%%%%%% move to application chapter
-
-%The workflow of this hot spot shown as \autoref{fig:fw-skeleton-workflow}.
-%Firstly, the tracker factory \texttt{OITrackerFactory} will take a concrete
-%class of \texttt{OIDevice} and create the instance of a concrete tracker but
-%return a reference of its superclass \texttt{OITracker}. Secondly, the tracker
-%will aggregate the information from NiTE2 and update the data holder within
-%the concrete class of \texttt{OITrackerFrame}, in our case
-%\texttt{OINiTETrackerFrame}. Finally, the gathered data will be sent to
-%the viewer and draw the skeleton out for the user.
-%In \autoref{fig:fw-skeleton-workflow}, the box in orange (NiTE2) is one of the
-%possible implementation. It can be replaced by any other implementation by
-%passing different indicator to the tracker factory.
-%
-%\begin{figure}
-%    \includegraphics[width=\linewidth]{figures/framework_oitracker_workflow.png}
-%    \caption[Tracker module interactive diagram]
-%    {Tracker module interactive diagram,
-%        the boxes in blue are our framework's components, the box in
-%        orange is the concrete tracking algorithm implementation, the boxes in
-%        gray are the low level components.}
-%    \label{fig:fw-skeleton-workflow}
-%\end{figure}
 
 \subsection{ReID Context Instantiation}
 \label{sec:fw-inst-context}

@@ -4,8 +4,9 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In this chapter, we will first introduce our team's previous work named Illimitable Space System (ISS) then point
-out the pain spots we encounter when using it.
+In this chapter, we will first introduce our team's previous work named 
+Illimitable Space System (ISS) then point out the pain spots we encounter when 
+using it.
 Motivated by these issues, we propose the goal we would like to
 achieve in this thesis.
 Furthermore, we define our research problems and extract
@@ -44,7 +45,7 @@ performance are shown as~\autoref{fig:bg}.
     \label{fig:iss-v2}
 \end{figure}
 
-ISS (Illimitable Space System) is a real-time interactive configurable
+ISS is a real-time interactive configurable
 artist's toolbox used to create music visualizations, visual effects and
 interactive documentary based on the inputs from users such as gestures or
 voice.
@@ -56,26 +57,27 @@ ISS was originally proposed in~\cite{first-proposed-iss} and improved
 in~\cite{iss-v2-design-theory-journal}, in order to differentiate them, we named
 the former ISSv1 and the latter ISSv2. Also, there was 
 ISSv3~\cite{iss-v3-appy-hour-gem2015, iss-v3-appy-hour-siggraph2015} which
-was designed for virtual reality application, but out of this thesis scope. We
-mainly focus on ISSv2 which can be conceptually represented by~\autoref{fig:iss-v2}, 
-which is a significant improvement in ISSv1 and is used
+was designed for virtual reality applications, but out of the scope of this 
+thesis. 
+We mainly focus on ISSv2 which can be conceptually represented 
+by~\autoref{fig:iss-v2}, which is a significant improvement of ISSv1 and is used
 for rapid development of real-time, motion-based graphics applications
-implemented in Processing which is on top of Java.
+implemented using Processing which is a software built written in Java.
 
 \section{Limitations of ISSv2}
 \label{sec:intro-lim-issv2}
 
-When we have more chances to do different performances in different places,
+When we have more chances to do more performances in different places,
 we found that sometimes the stage given to us is too large and cannot be covered
 by only a single camera. It restricts us to design the performance within a
-limited space, which is actually conflicting with our project's name, Illimitable Space
-System.
+limited space, which is actually conflicting with our project's name, 
+Illimitable Space System.
 Also, recently the price of consuming level depth camera has become
 much cheaper. In the market, there are different kinds of depth cameras
 being manufactured (like Kinect v1, Kinect v2 and RealSence) and these cameras
 become more and more powerful (higher speed, frame rate, resolution, larger
-bandwidth and etc). But ISSv2 is hardware-dependent can only work with Kinect
-v1 which is kind of out of date now.
+bandwidth and etc). But ISSv2 is hardware-dependent, it can only work with 
+Kinect v1 which is kind of out of date now.
 
 Under such a situation, we started to think that if one camera is
 not enough, we can have more than one and each of them takes care of a certain
@@ -93,14 +95,11 @@ in any one of your cameras.
 
 In order to catch up with the device evolution, we would like to move from 
 older devices to the latest models. But we don't want to discard our previous 
-compatibility while evolving to new technologies. So how to enable our previous work to be 
-compatible with various kinds of cameras is also a challenge for us.
+compatibility while evolving to new technologies. So how to enable our previous 
+work to be compatible with various kinds of cameras is also a challenge for us.
 
-%\section{Problem Statement}
 \section{Research Problem}
 \label{sec:intro-pbstat}
-
-%In order to address the limitations we found for ISSv2, our research can be
 
 From the situation we described above, our research can be
 intuitively divided into two parts: 
@@ -133,30 +132,29 @@ person retrieval. So we end up with object detection and object retrieval.
 \subsection{Object Detection}
 
 In object detection, you are given an image $I$ and a list of classes $C$ which
-the objects
-appear in $I$ belong to. Your task is to detect instances of the object within
-$I$ belong to a specific class in $C$.
-For each instance $i$, you need to output first $c \in C$ which represents which class
-this instance belongs to and second
-a bounding box $B$ to indicate the location of that instance with respect to the
-image $I$.
+the objects appear in $I$ belong to. Your task is to detect instances of the 
+object within $I$ belong to a specific class in $C$.
+For each instance $i$, you need to output first $c \in C$ which represents 
+which class this instance belongs to and second a bounding box $B$ to indicate 
+the location of that instance with respect to the image $I$.
 
 \subsection{Object Retrieval}
 
 In object retrieval, you are given a query image $q$ and a set of gallery images
 $G$. Your task is to find the
-most likely image $g \in G$ for which both $q$ and $g$ represent the same instance
-$instance(q) = instance(g)$.
+most likely image $g \in G$ for which both $q$ and $g$ represent the same 
+instance $instance(q) = instance(g)$.
 
 \subsection{Device Abstraction}
 
-The second part we mentioned above is that we try to conceptually eliminate the differences
-among various kinds of cameras. It can be translated as we would like to access
-data via a set of common APIs without considering what kind of hardware
+The second part we mentioned above is that we try to conceptually eliminate the 
+differences among various kinds of cameras. It can be translated as we would 
+like to access data via a set of common APIs without considering what kind of 
+hardware
 we are using. Assume we have a list of device $D = {d_1, d_2, ..., d_n}$ and a
 list of API $F = {f_1, f_2, ..., f_n}$,
-we can trigger the same effect
-while calling the same API which can be mathematically expressed as:
+we can trigger the same effect while calling the same API which can be 
+mathematically expressed as:
 $
 \exists f_n \in F, \forall (d_i, d_j) \in D
 \Longrightarrow f_{n}(d_i) = f_{n}(d_j)
@@ -253,15 +251,15 @@ settings. The most straightforward way to do is that for each device, we
 create a filtering algorithm employing some methods provided by the hardware
 driver to perform background removal. But the limitation is also obvious when
 a new device is added: you have to re-implement the same algorithm again and
-again for each new device. If another demand is required, you need to implement all of them when a
-new device is being supported.
+again for each new device. If another demand is required, you need to implement 
+all of them when a new device is being supported.
 Another elegant solution is that we could extract the data needed to perform
 background subtraction into a common data structure then apply a general
 algorithm based on it. Next time, when a new device comes, what we need to do
 will be just the transformation from the device-specific data structure to our
 common one. If some other demands like background removal are required, we can
-always follow the same pattern to solve them. We call all these common data structures
-and common algorithms the back-end of the system.
+always follow the same pattern to solve them. We call all these common data 
+structures and common algorithms the back-end of the system.
 
 This usage scenario can be abstractly summed-up as the following, which becomes
 one of our requirements:
@@ -275,9 +273,9 @@ one of our requirements:
 \subsection{Person Re-identification}
 \label{sec:intro-sq-reid}
 
-Imagine a scenario where there is a show given by two actors, and we would like to
-project visual effect $\mathit{vfx}_1$ on actor $a_1$ while $\mathit{vfx}_2$ on
-actor $a_2$.
+Imagine a scenario where there is a show given by two actors, and we would like
+to project visual effect $\mathit{vfx}_1$ on actor $a_1$ while $\mathit{vfx}_2$
+on actor $a_2$.
 Unfortunately, the stage is too large and cannot be covered by a single camera.
 We have to employ two cameras, each of them covers half the space of the stage.
 According to the performance director, we need to make sure that no matter
@@ -289,9 +287,10 @@ one of our requirements:
 \begin{itemize}
     \item \textbf{FR4}: The solution shall be able to detect all the appearance 
     of human bodies and provide their location by bounding boxes.
+    
     \item \textbf{FR5}: The solution shall be able to recognize a cropped image 
-    with an identity across multiple cameras if the identity has been defined in 
-    advance.
+    with an identity across multiple cameras if the identity has been defined
+    in advance.
 \end{itemize}
 
 \subsection{Skeleton Tracking}
@@ -301,13 +300,13 @@ In ISSv2, we have some visual effects designed specifically for the human
 skeleton. But because of the underlying dependencies issue, we can only obtain 
 the skeleton data from Kinect v1 camera.
 In order to break the restriction from the specific device-oriented
-dependencies, we need to make the skeleton extraction process 
+dependencies, we need to make the skeleton extraction process
 device-independent.
 It means we should be able to extract skeleton data from a variety
-of devices and convert them into the common skeleton data format which is simply 
-a set of points in a picture. A possible scenario can be described as the following: a
-performance director would like to make use of some skeleton-based visual
-effect and want them to be used with different devices.
+of devices and convert them into the common skeleton data format which is
+simply a set of points in a picture. A possible scenario can be described as
+the following: a performance director would like to make use of some
+skeleton-based visual effect and want them to be used with different devices.
 
 This usage scenario can be abstractly summed-up as the following, which becomes
 one of our requirements:
@@ -320,14 +319,14 @@ one of our requirements:
 \subsection{Interaction with Other Modules}
 \label{sec:intro-sq-inta}
 
-As mentioned before, there are a gesture and facial recognition modules being developed
-concurrently to our research. Theses modules should be able to use the infrastructure (e.g.
-device abstraction) we proposed in this thesis. Also the module we develop here
-should be able to communicate with these two other modules from other system
-developers. Imagine a scenario where the visual effect needs to change according
-to the actor's gestures. When the actor push their hand, a zoom-out
-effect should be applied while the actor pull their hand, a zoom-in effect
-occurs.
+As mentioned before, there are a gesture and facial recognition modules being
+developed concurrently to our research. Theses modules should be able to use
+the infrastructure (e.g. device abstraction) we proposed in this thesis. Also
+the module we develop here should be able to communicate with these two other
+modules from other system developers. Imagine a scenario where the visual
+effect needs to change according to the actor's gestures. When the actor push
+their hand, a zoom-out effect should be applied while the actor pull their
+hand, a zoom-in effect occurs.
 
 This usage scenario can be abstractly summed-up as the following, which becomes
 one of our requirements:
@@ -344,6 +343,29 @@ one of our requirements:
 By analyzing the scenarios we described previously, we found that in order to
 achieve them our solution must meet the following non-functional requirements:
 
+\textbf{Real-time Response:} 
+\textit{The system should be able to process the task in a speed that at least 
+24 frames per second (FPS).}
+
+As our solution want to address covering a large range of area on the stage 
+during a live performance issue. It is extremely important for our solution to 
+keep the whole person re-identification process in real-time since it is a live 
+show and the audiences are watching it on the scene. If we cannot make it in 
+real-time, our solution is actually useless, which means it is a hard 
+constraint for our solution.
+
+\textbf{Accuracy:} 
+\textit{The system should be able to detect the appearance of person and 
+re-identify them across multiple cameras with an accuracy comparable to the 
+state of the art solutions.}
+
+While keeping the real-time requirement, we also need to make sure our solution
+provide a considerable accuracy for both the detection and retrieval processes.
+In our case, since we are in the context of real-time artistic performance, it
+is hard to state an acceptable base line for it. But we should try our best to
+achieve a higher accuracy making sure our solution comparable to the state of
+the art solution existing in each of their community.
+
 \textbf{Extensibility:}
 \textit{The ability of a software system to acquire and integrate new
 components.}
@@ -357,22 +379,23 @@ solution smoothly and easily.
 \textbf{Usability:}
 \textit{The ability of a software system to effectively provide the expected
 functionalities to the user, in a manner that is as intuitive and the least
-strenuous or
-problematic as possible.}
+strenuous or problematic as possible.}
 
-For any kind of software system, in order to attract the users and/or programmers, as the designer
-we should try our best to provide simple, meaningful and understandable APIs.
+For any kind of software system, in order to attract the users and/or 
+programmers, as the software solution designer we should try our best to 
+provide simple, meaningful and understandable APIs.
 That means the name of our APIs, the required parameters for each functionality
 and the final result from the return value should be concise, compact and
 logically make sense. For the experienced users in the same area, they should
-be able to move from other similar solutions to ours without putting too much effort.
+be able to move from other similar solutions to ours without putting too much
+effort.
 In other words, the learning curve should be as smooth as possible
 and necessary documentation and comments should be provided properly.
 
-\section{Contributions}
+\section{Contribution}
 \label{sec:intro-contrib}
 
-Our contribution are four-fold:
+Our contribution is four-fold:
 
 \begin{itemize}
     \item We offer an overall architecture that allows users to perform
@@ -431,56 +454,37 @@ Our contribution are four-fold:
 \label{sec:intro-outline}
 
 In this chapter, we introduced our research background, pointed out the
-existing limitations, and stated the research problems giving them clear academic
-definitions and restricted our scope.
+existing limitations, and stated the research problems giving them clear
+scientific definitions and restricted our scope.
 In the following chapters, the thesis will be structured in the way listed
 below:
 
 \begin{itemize}
     \item In \autoref{chap:RelatedWork}, we will review existing literature
-    related to our research problem and also the available software which is
+    related to our research problem and also the available software which may be
     useful for our implementation. In the summary section of this chapter,
-    based on our need, we will select our target detector and recognizer and
-    stick with them in our implementation described in the following chapters.
+    based on our need, we will select one as our target detector and recognizer
+    then stick with them in our implementation described in the following
+    chapters.
 
     \item In \autoref{chap:fw-design} and \autoref{chap:fw-inst}, with all
     needed background in hand from the previous chapter, we will propose our
-    solution in detail and explain our design and implementation in a top-down
-    manner.
+    framework solution in detail in a top-down manner. 
+    Precisely, in \autoref{chap:fw-design} we describe our design of the
+    solution framework and in \autoref{chap:fw-inst} we describe how it has been
+    instantiated to satisfy our need.
 
     \item In \autoref{chap:fw-app}, we will describe the applications built on
     top of our proposed solution, which becomes a proof of concept that our
-    solution can actually fulfill our functional requirements.
+    solution can actually fulfill our listed requirements.
 
-<<<<<<< HEAD
-    \item In \autoref{chap:Evaluation}, we will report our results showing the
-	benchmarks for the main components in our solution with commonly acknowledged 
-	metrics. Also, we will prove that both functional and non-functional
-    requirements are really fulfilled.
-=======
     \item In \autoref{chap:Evaluation}, we will first demonstrate both the
     functional and non-functional requirements are really fulfilled by our
-    framework solution. Then we report our result showing the benchmark for the
-    main components in our solution with commonly acknowledged metrics.
->>>>>>> 8a860f413a6d6a177b30d175dd449d3f0ea1566b
+    framework solution. Then we report our results showing the benchmarks for 
+    the main components in our solution with commonly acknowledged metrics.
 
     \item In \autoref{chap:Conclusion}, we sum up our work with advantages and
 	limitations and point out some potential research directions in the future.
 \end{itemize}
-
-%In the following chapters, we will first describe the existing solution of our
-%interested research and review corresponding literature in
-%\autoref{chap:RelatedWork}
-%so that we can see the gap and understand the current state of the art in this
-%domain.
-%With all needed background, we then will propose our solution in detailed and
-%explain our design and implementation in a top-down manner in
-%\autoref{chap:fw-design} and \autoref{chap:fw-inst}. Followed by the
-%application we built on top of our solution to address the cross cameras
-%tracking problem \autoref{chap:fw-app}.
-%In \autoref{chap:Evaluation}, we will report our result showing benchmark for
-%each components in our solution with commonly acknowledged metrics.
-%At the end, we sum up our work with advantages and limitations, pointing our
-%some potential directions for future work \autoref{chap:Conclusion}.
 
 % EOF

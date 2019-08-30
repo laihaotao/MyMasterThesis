@@ -1,0 +1,85 @@
+\usepackage{comment}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{amssymb} 
+\usepackage{amsmath}
+\usepackage{multimedia}
+\usepackage{hyperref}
+\usepackage{multirow}
+\usepackage{subfigure}
+\usepackage{ragged2e}
+\usepackage{appendixnumberbeamer}
+
+% use speaker note
+\usepackage{pgfpages}
+\setbeamertemplate{note page}[plain]
+\setbeameroption{hide notes} % Only slides
+%\setbeameroption{show only notes} % Only notes
+%\setbeameroption{show notes on second screen=right} % slides and notes
+\setbeamertemplate{note page}{\pagecolor{yellow!5}\vfill\insertnote\vfill}
+
+\renewcommand{\raggedright}{\leftskip=0pt \rightskip=0pt plus 0cm}
+
+% beamer theme: https://hartwork.org/beamer-theme-matrix/
+\usetheme{Goettingen}
+
+% set the image paths
+\graphicspath{ {imgs/} {../figures/} }
+% set figure display with number
+\setbeamertemplate{caption}[numbered]
+\setbeamerfont{caption}{series=\normalfont,size=\fontsize{6}{8}} 
+
+% define some colors
+\definecolor{lightblue}{RGB}{0,73,114}
+\definecolor{grund}{RGB}{238,241,251}          
+\definecolor{schrift}{RGB}{0,73,114}
+\definecolor{magenta}{RGB}{128,0,128}
+\definecolor{maroon}{RGB}{113,41,21}
+\definecolor{bistre}{rgb}{0.24, 0.17, 0.12} % black
+\definecolor{mygrey}{rgb}{0.52, 0.52, 0.51} % grey
+\colorlet{main}{green!50!black}
+\colorlet{text}{bistre!100!white}
+
+% colorized the components
+\setbeamercolor{title}{fg=white}
+\setbeamercolor{frametitle}{fg=white}
+\setbeamercolor{section in toc}{fg=maroon}
+\setbeamercolor{normal text}{fg=text}
+\setbeamercolor{qed symbol}{fg=maroon}
+\setbeamercolor{math text}{fg=black}
+\setbeamercolor{structure}{fg=maroon, bg=maroon}
+% for sidebar
+\makeatletter
+\setbeamertemplate{sidebar canvas \beamer@sidebarside}
+[vertical shading][top=maroon!20,bottom=maroon!13]
+\makeatother
+
+% set the title box rounded and with shadow
+\setbeamertemplate{title page}[default][colsep=-4bp, rounded=true, shadow=true]
+
+% add page number of the footline
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \raisebox{1.2pt}[0pt][0pt]{\insertframenumber/\inserttotalframenumber}
+}
+
+% table of content, only display section (without subsection) with section No.
+\setbeamertemplate{section in toc}[sections numbered]
+
+% reset some component's font size in the title page
+\setbeamerfont{subtitle}{size=\tiny}
+\setbeamerfont{date}{size=\tiny}
+\setbeamerfont{institute}{size=\tiny}
+
+% create new command for footnote without reference
+\newcommand\blfootnote[1]{%
+    \begingroup
+    \renewcommand\thefootnote{}\footnote{#1}%
+    \addtocounter{footnote}{-1}%
+    \endgroup
+}
+\setbeamerfont{footnote}{size=\tiny}

@@ -1,32 +1,29 @@
 % $Revision$
 
 \begin{abstract}
-Person detection, person re-identification, each on their
-own, is a rapidly increasing and independent research task of
-computer vision.
+Person detection and person re-identification
+are rapidly increasing research areas in computer vision.
 %
-In fact, the output from person detection is naturally the input
-of person re-identification task, which indicates that these two
-tasks are highly related, even though there are a certain
-number of solutions for each of the individual sub-tasks. But currently,
-there is no existing solution that can combine them to form a
+They are independent but related. In fact, the output of person detection 
+is the input of person re-identification. There are a certain
+number of solutions for each of these two individual tasks. But currently,
+there is no existing solution that can combine them to form an
 integrated working pipeline.
 
 To fill the gap, we propose a highly modular and structural framework
-solution that provides the functionalities of cross-language
-invocation, pipeline execution mechanism, viewer, device, tracker,
-detector and recognizer abstraction.
+solution that provides the functionalities including not only cross-language
+invocation and pipeline execution mechanism but also viewer, device, tracker,
+detector, and recognizer abstraction.
 %
 We instantiate the proposed framework to
 achieve our goal of tracking the same person across multiple
 cameras, which essentially is the combination of person detection
 and person re-identification.
-With our framework instance, we also support skeleton tracking, as well as camera
-calibration, image alignment and green screen image which commonly
-comes with a computer vision framework.
+Besides the main task of person re-identification, we also support skeleton 
+tracking, as well as camera calibration, image alignment and green screen image 
+which commonly comes with a computer vision framework.
 %
-We evaluate our solution first from the framework point of view
-according to the requirements and scenarios then also report the
-major metrics used by the research community for person detection
-and person re-identification tasks respectively.
+We evaluate our proposed solution according to the requirements and usage
+scenarios and report the major metrics used by the research community for
+person detection and person re-identification tasks, respectively.
 \end{abstract}

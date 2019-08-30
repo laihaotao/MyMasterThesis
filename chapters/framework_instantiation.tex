@@ -3,6 +3,7 @@
 \index{Framework Instantiation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace*{-5mm}
 
 In this chapter, we are going to describe in detail how we create an instance
 of the framework we proposed in \autoref{chap:fw-design}. We start with the
@@ -12,22 +13,24 @@ Then for each frozen spot introduced in \autoref{sec:fw-design-core} and
 \autoref{sec:fw-design-spec}, we describe our instantiation process and the
 essential implementation detail.
 
-
+\vspace*{-2mm}
 \section{Implementation Decision}
 \label{sec:fw-inst-impl}
+\vspace*{-2mm}
 
-In \autoref{sec:fw-design-why}, we stated why choosing the framework
-solution. For a programming problem, if we just want to solve it and only it 
-specifically, what we need may be just a piece of program. But if we want to
-provide a solution in general, it may require extra works and become more
+In \autoref{sec:fw-design-why}, we stated why we chose a framework design
+approach. For a programming problem, if we just want to solve it and only it 
+specifically, what we need may be just a piece of regular software. But if we want to
+provide a generic solution that may apply to different problems, it requires extra work and may become more
 complex. The framework approach aims at providing a general solution, so for
 sure its complexity is higher and its development will become more difficult
 than the usual approach.
 Under such a situation, it is important to make decisions that can enable us to
-work efficient and productive. For implementing a framework, what kind of
+work in an efficient and productive manner. For implementing a framework, what kind of
 programming language we are going to use, how to compile the whole framework
 with its dependencies and build executable software and how to manage the whole
-project efficient and clear are all significant points.
+project efficiently and clearly are all significant points that we have to address, 
+which we are discussing in this chapter.
 
 \subsection{Programming Language and Compilation Tool}
 \label{sec:fw-inst-lang-ct}
@@ -35,15 +38,15 @@ project efficient and clear are all significant points.
 In \autoref{sec:related_work_framework}, a list of currently available software
 has been surveyed. From that list we found most of them were written in C++, based
 on this fact, to make good used of the existing resources, we
-determine to use C++ to develop our framework as well. We can be benefited from
+determine to use C++ to develop our framework as well. We can benefit from using 
 C++ in the following aspects:
 
 \begin{itemize}
     \item Utilizes the existing software maximally.
     \item Obtains faster speed than most of the other programming languages 
     since it is closer to the hardware.
-    \item Relatively easier to communicate with other languages since a lot of
-    programming language itself were written in C/C++.
+    \item Relatively easier to communicate with other languages since a many
+    programming languages were themselves written in C/C++.
 \end{itemize}
 
 With these advantages, C++ also has it own limitations. For example, there is
@@ -51,8 +54,8 @@ no easy way to manage dependencies when the project becomes complicated.
 To address this problem, CMake was selected, which is an open-source cross-platform building tool. By using it, we can build our framework in
 Linux, MacOS or any other *nix-based platform with the same command.
 Also, with the support of CMake, the end-users can enable the building process
-partially which means only compile and build the framework based on their
-needs.
+partially which means they need only to compile and build the framework based on their
+specific needs.
 
 \subsection{Framework Layers and Project Structure}
 \label{sec:fw-inst-layer-strcut}
@@ -64,7 +67,7 @@ detailed as you burrow down into the layer stack. In our implementation, to sepa
 frameworks, we proposed a three-layer software model shown as
 \autoref{fig:fw-layers} and assign components into
 corresponding layers according to their functionalities, the description of each
-layer can be found in \autoref{tab:desc-layer}. With stated logical separation,
+layer can be found in \autoref{tab:desc-layer}. Within such a logically stated separation,
 in our implemented code base, we also need to structure our code clear and
 maintain the modularity of our design. For this purpose, we employ a project
 directory structure shown as \autoref{tab:fw-dir}.
@@ -76,7 +79,6 @@ directory structure shown as \autoref{tab:fw-dir}.
     \label{fig:fw-layers}
 \end{figure}
 
-% todo: 需要再重新组织一下 根据上面的图 现在这个不太准确了
 \begin{table}
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{ll}
@@ -96,7 +98,7 @@ directory structure shown as \autoref{tab:fw-dir}.
             create custom functionalities based on their own demands
         \end{tabular} \\ \hline
         Hardware Layer          & \begin{tabular}[c]{@{}l@{}}Provides
-            encapsulation of the hardware, usually the application \\
+            encapsulation of the hardware, which usually the application \\
             developers
             will not interested in
         \end{tabular}  \\ \hline
@@ -106,29 +108,65 @@ directory structure shown as \autoref{tab:fw-dir}.
     \label{tab:desc-layer}
 \end{table}
 
-\begin{table}[]
+\begin{table}
+    \resizebox{\textwidth}{!}{%
     \begin{tabular}{ll}
         \hline
         Directory Name &
         Description
         \\ \hline
-        src       & Contains all the source code of the framework itself
+        {\texttt{src}}       & Contains all the source code of the framework itself
         \\ \hline
-        samples   & Contains all the source code of the application level
+        {\texttt{samples}}   & Contains all the source code of the application level
                     samples
         \\ \hline
-        modules   & Contains custom cmake modules for building the framework
+        {\texttt{modules}}   & Contains custom cmake modules for building the framework
         \\ \hline
-        python    & Contains all the python modules using by the framework
+        {\texttt{python}}    & Contains all the python modules using by the framework
         \\ \hline
-        script    & \begin{tabular}[c]{@{}l@{}}Contains all necessary
+        {\texttt{script}}    & \begin{tabular}[c]{@{}l@{}}Contains all necessary
                     scripts (e.g. download datasets, \\ configure environment)
                     \end{tabular}
         \\ \hline
     \end{tabular}
+    }
     \caption{Directory structure and their functionalities.}
     \label{tab:fw-dir}
 \end{table}
+
+\section{Framework Instantiation Overview}
+\label{sec:fw-inst-core-and-spec-rel}
+
+As discussed at the beginning of \autoref{sec:fw-design-spec}, the 
+relationship between the core and specialized framework is that each
+specialized framework takes the needed modules in the core as dependencies.
+In this section, we would like to give an overview regarding how the instances 
+we create will interact with the core and their corresponding specialized 
+framework.
+
+For the device instances, of course, it will have interaction with the
+device module within the core. Precisely, the device instances will have to 
+inherit the \texttt{OIDevice} class. Also, in order to allow the framework
+to control the flow of execution, all the devices instance will have to
+implement the \texttt{OIFlowable} interface.
+For the tracker instance, two instances classes will have to inherit the
+\texttt{OITracker} and the \texttt{OITrackerFrame} respectively.
+For detector instance and recognizer instances, since our implementation are
+based on deep learning approaches and the programs are written in Python.
+First we have to inherit from the \texttt{OIDetector} and \texttt{OIRecognizer}
+respectively, then take the \texttt{OIPythonEnv} as dependency. 
+Finally, like the device module, they also have to implement the 
+\texttt{OIFlowable} interface to transfer the control power to the core 
+framework.
+
+%When the framework being published, all the application developers will
+%only use the exposed APIs which are defined in the core framework
+%to build their applications. They cannot see the how the framework works
+%internally which is the goal of encapsulation.
+
+In the following section, we are going to explain in detail the instantiation
+process of the essential device module within the core as well as each of the 
+specialized frameworks.
 
 \section{Core and Specialized Framework Instantiation}
 \label{sec:fw-inst-core-and-spec}
@@ -166,7 +204,7 @@ real cameras, we have to instantiate the framework by creating a hot spot for
 the device's frozen spot.
 Currently, we plan to support three kinds of devices: Kinect v1, Kinect v2 and
 RealSense D435. These devices come from different manufacturers
-supported by their own hardware drivers. To combine them within a same set of
+which are supported by their own hardware drivers. To combine them within a same set of
 APIs, the idea can be illustrated by \autoref{fig:fw-inst-device}. For each
 kind of device, we create a concrete class, in our case, will be the class
 \texttt{OIKinect} and \texttt{OIRealSense} to wrap the concrete implementation
@@ -180,7 +218,7 @@ from the dynamic dispatch mechanism.
 \begin{figure}
     \centering
     \includegraphics[scale=0.8]{figures/framework_inst_device.pdf}
-    \caption{How we instantiate device module of the core framework.}
+    \caption{Instantiation of the device module of the core framework.}
     \label{fig:fw-inst-device}
 \end{figure}
 
@@ -190,28 +228,28 @@ from the dynamic dispatch mechanism.
 \begin{figure}
     \centering
     \includegraphics[scale=0.8]{figures/framework_inst_detector.pdf}
-    \caption{How we instantiate the detector specialized framework.}
+    \caption{Instantiation of the detector specialized framework.}
     \label{fig:fw-inst-detector}
 \end{figure}
 
 In \autoref{sec:fw-design-spec-detector}, we proposed the design of frozen spot
 for a detector specialized framework in general. To achieve person
 detection to fulfill our requirement, based on the detector frozen spot, we
-create a deep learning-based pedestrian detector hot spot. The overall idea
+create a deep learning-based person detector hot spot. The overall idea
 shown as \autoref{fig:fw-inst-detector}.
 
 We develop a concrete class \texttt{OIPedestrianDetector} which extends the
 abstract class \texttt{OIDetector}, serving as a wrapper of the concrete Python
-implementation of the YOLO detector. The communication happened here between
-C++ and Python is enable by the cross-language module introduced in
+implementation of the YOLO detector. The communication required here between
+C++ and Python is enabled by the cross-language module introduced in
 \autoref{sec:fw-design-core-cross-lang} from the core framework.
-From the users aspect, they don't need to worry about the
-how the framework work with various other detectors, but only need to know
+From the users aspect, they don't need to worry about
+how the framework works with various other detectors, but only need to know
 the usage of them. For the specialized framework developers, 
 with such design, they don't need to know how the cross-language works as well, 
 but passing the requested methods or classes name to the \texttt{OIPythonEnv}, 
-the cross-language module will handle it for you. It simplifies a lot of works
-effectively improving the development process of both the applications and
+the cross-language module will handle it for you. It simplifies the required impementation
+effectively by improving the effectiveness of the development process of both the applications and
 framework itself.
 
 We previously described the big picture of the detector specialized framework.
@@ -230,7 +268,7 @@ The reason why we need to re-train is that the existing YOLO implementation
 is used for object detection rather than person detection.
 The difference between them is that if you want to make your model be able to
 detect more classes of objects the more training time you need to
-pay as well as memory space. Since we want to integrate two deep learning-based
+spend as well as memory space. Since we want to integrate two deep learning-based
 approaches (detection and re-identification) in real-time, in such a context,
 both time and space complexity are essential to us.
 
@@ -242,9 +280,9 @@ both time and space complexity are essential to us.
 
 In our implementation, we follow exactly the same network architecture proposed
 in \cite{yolov3-paper-2018} illustrated by \autoref{fig:fw-detector-archit}.
-Since there are already tons of pre-trained YOLO model exist, we are not going 
+Since there are already numerous pre-trained YOLO model in existence, we are not going 
 to train it from scratch, but perform some fine-tuning processes 
-on a pre-trained model to get the one which can fit to our need.
+on a pre-trained model to get the one which can fit our need.
 The full tuning process we employed can be described by the following steps:
 
 \begin{enumerate}
@@ -261,9 +299,9 @@ The full tuning process we employed can be described by the following steps:
 \end{enumerate}
 
 Since we reduce the complexity of an object detector to a person detector,
-we believe that could help to improve the training speed. We are trying to
-provide a theoretical analysis to prove it.
-According to \cite{yolov3-paper-2018}, there are total 9 anchors which are
+we believe that could help to improve the training speed. The following 
+discussion explains our rationale:
+According to \cite{yolov3-paper-2018}, there is a total of 9 anchors which are
 obtained by applying K-means cluster algorithm during the training phase. 
 These 9 anchors can be divided into 3 groups, each of them is given to final 
 feature map with the size $[13, 13, 255]$, $[26, 26, 255]$ and $[52, 52, 255]$ 
@@ -271,7 +309,7 @@ respectively.
 So we can calculate that we are going to have:
 $13 \times 13 \times 3 + 26 \times 26 \times 3 + 52 \times 52 \times 3=10647$
 bounding boxes for each input image. For each bounding box, we need to compute
-a probability for each pre-defined classes then multiply the confidence score 
+a probability for each of the pre-defined classes then multiply the confidence score 
 for this box to obtain the final score for one class illustrated by
 \autoref{fig:fw-detector-calc}. Take the VOC2012 dataset as
 an example, there is a total of 20 classes of object. So for each bounding box,
@@ -284,7 +322,7 @@ then it will be $20 \times 10647 = 212940$ operations per input image.
 }
 This can also speed up the non-maximum suppression (NMS) process which could 
 help to eliminate overlapped boxes.
-In most of the deep learning problem where the training data is normally large,
+In most of the deep learning problems where the training data is normally large,
 these modifications will significantly help to reduce the training time.
 
 \begin{figure}
@@ -295,7 +333,7 @@ these modifications will significantly help to reduce the training time.
 
 Once we have the score for each interested class, we will (1) use a threshold to
 filter out the one with a lower score and (2) apply the NMS algorithm to
-eliminate the boxes with high ratio overlapping. Assume we still use the
+eliminate the boxes with high overlapping ratio. Assume we still use the
 VOC2012 dataset with 20 classes, since we have 10647 boxes, then the class score
 can form a $20 \times 10647$ (row $\times$ col) matrix. The procedure can be
 described in the following way and visualized by \autoref{fig:fw-detector-nms}.
@@ -314,7 +352,7 @@ described in the following way and visualized by \autoref{fig:fw-detector-nms}.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/framework_detector_nms.png}
-    \caption{The process of non-maximum suppression.}
+    \caption{Non-maximum suppression process.}
     \label{fig:fw-detector-nms}
 \end{figure}
 
@@ -324,26 +362,26 @@ described in the following way and visualized by \autoref{fig:fw-detector-nms}.
 Person recognizer is the most significant component in our specialized
 framework, without it we cannot reach our final goal covering the stage with
 more than one camera. In \autoref{sec:fw-design-spec-recognizer}, we proposed the
-basic architecture of the frozen spot for a common recognizer. For our specific
+generic design of the frozen spot for a common recognizer. For our specific
 purpose, we need the capacity to re-identify the same person across multiple
 cameras, so what we need is actually a person recognizer instance (hot spot).
 Just like the way we did for the detector, we follow the same idea and come up with
 the instantiation plan shown as \autoref{fig:fw-inst-recognizer}. The only
 difference here is that the database invoked in this case, we have to create
 the database first before we use the recognizer, otherwise, there is nothing to
-be recognized. There is a variety of ways to create the database, the corresponding
-logic should be added into the \texttt{attachDatabase} method. And the way how
-to compare the input and the record within the database should be written in
+be recognized. There is a variety of ways to create the database. The corresponding
+logic should be added into the \texttt{attachDatabase} method. And the
+comparison between the the input and the records within the database should be written in
 the method \texttt{lookupDatabase}. In this case, we are using a deep
-learning-based model, so what we need to is using the model to compute the
+learning-based model, so we need to use the model to compute the
 descriptor for each given record and store them in the database then compare the
-distance between query and gallery descriptors, more detail can be found in
+distance between query and gallery descriptors. More detail can be found in
 \autoref{fw-recognizer-spec-inference}.
 
 \begin{figure}
     \centering
     \includegraphics[scale=0.8]{figures/framework_inst_recognizer.pdf}
-    \caption{How we instantiate the recognizer specialized framework.}
+    \caption{Instantiation of the recognizer specialized framework.}
     \label{fig:fw-inst-recognizer}
 \end{figure}
 
@@ -351,10 +389,10 @@ In order to keep the consistency with the person detector and fill the
 research gap described in \autoref{sec:related_work_openiss_tf}, our 
 implementation of the recognizer is written in Python and built on top of 
 TensorFlow and Keras.
-In the following paragraph, we will first introduce our network structure, then
+In the following paragraph, we first introduce our network structure, then
 explain our training process which includes data pre-processing, loss 
 function,  optimizer and some important hyper-parameters.
-In the end, we will discuss the methodology which we used to perform inference
+In the end, we will discuss the methodology that we used to perform inference
 by using the trained model.
 
 \subsubsection{Network Architecture}
@@ -377,7 +415,7 @@ by using the trained model.
 
 We implemented a network architecture shown as \autoref{fig:fw-reid-archit},
 which is a combination of the identification model and distance metric-based
-model mentioned in \autoref{sec:related_work_re_id}. It employed a Residual-50
+model mentioned in \autoref{sec:related_work_re_id}. It employs a Residual-50
 network as the feature extractor followed by a global average pooling layer
 (GAP) to flatten out the feature vector. Then in one branch, the extracted
 feature $f_t$ was sent to calculate the triplet loss while in
@@ -468,7 +506,7 @@ model's convergence, so we set our total training epochs to 120 as well.
     \begin{center}
         \includegraphics[scale=0.6]{figures/framework_reid_sampler_uml.png}
     \end{center}
-    \caption{UML diagram of \texttt{RandomSampler} class}
+    \caption{UML class diagram of \texttt{RandomSampler} class}
     \label{fig:fw-sampler-uml}
 \end{figure}
 
@@ -510,9 +548,9 @@ that there is a steep increase between $10^{th}$ and $20^{th}$ epochs.
         \includegraphics[width=.5\linewidth]{figures/train_acc.png}
     \end{subfigure}
     \caption[Training visualization diagram]
-    {Training visualization diagram. upper left: training identification loss
-        curve, upper right: training triplet hard loss curve, lower left: total
-        training loss curve, lower right: training classification accuracy.}
+    {Training visualization diagram. Upper left: training identification loss
+        curve. Upper right: training triplet hard loss curve. Lower left: total
+        training loss curve. Lower right: training classification accuracy.}
     \label{fig:fw-training}
 \end{figure}
 
@@ -535,31 +573,30 @@ the distance $D_i$ between $f$ and $f_i^{query}$:
 D_i =  distance(f, f_i^{query}) \:\: f \in f_i^G
 \end{equation}
 
-Finally, the gallery image which gives the minima distance will be the one
+Finally, the gallery image which gives the minimal distance will be the one
 whose identity needs to be returned:
 
 $$
 id = \arg \min(D_i)
 $$
 
-If the reader wants to reproduce the result, attention need to be paid on one issue
+If the reader wants to reproduce the result, attention needs to be paid on one issue
 that the dimension of $f_i^{query}$ and $f_i^G$ are different so when we try
 to feed the single query image into the model, we have to explicitly add one
 more axis to it.
-What's more is that, according to \autoref{eq:dis-comp},  $distance$ function is
+What's more is that, according to \autoref{eq:dis-comp},  a $distance$ function is
 used to perform comparison between $f$ and $f_i^{query}$. The most popular
 distance function for two vectors comparison are: (1) euclidean distance and (2)
 cosine distance. According to \cite{tricks-and-baseline-for-reid-2019}, using
 (2) can obtain a better result. Our implementation offers both two
 methods, but for simplicity we don't follow exactly the cosine distance
 calculation. We have the function \texttt{euclidean(f1, f2)} for the standard
-Euclidean distance but \texttt{L2(euclidean(f1, f2))} which is
-mathematics equivalent for Cosine distance.
+Euclidean distance but \texttt{L2(euclidean(f1, f2))} which is equivalent to cosine distance.
 
 \subsection{Tracker Specialized Framework Instantiation}
 \label{sec:fw-inst-tracker}
 
-In the plan of OpenISS framework, there are three kinds of tracker are needed:
+In the plan of OpenISS framework, there are three kinds of trackers that are needed:
 skeleton tracker, facial landmark tracker and gesture tracker. In this thesis,
 we focus on the skeleton tracker.
 Skeleton tracking is the processing of depth image data to establish the
@@ -568,20 +605,9 @@ useful in many cases, as mentioned in \autoref{sec:related_work_other},
 the approach proposed by \cite{rgbd-for-reid} takes skeleton as the starting
 point. A lot of research has been conducted in this area and a lot of
 methods both conventional and deep learning-based have been developed. We will
-not focus on developing our approach but implement one and design it as an
-instance of the specialized framework to allow users to integrate others or
-develop their own approach easily. \autoref{fig:fw-skeleton} is an example
-result from our solution.
-
-\begin{figure}
-    \begin{center}
-        \includegraphics[scale=0.3]{figures/framework_skeleton.png}
-    \end{center}
-    \caption[An example of skeleton tracking]
-    {An example of skeleton tracking, red points represent high
-        confidence and green point mean less confidence.}
-    \label{fig:fw-skeleton}
-\end{figure}
+not focus on developing our own approach but to implement an existing one and design it as an
+instance of the specialized framework to allow users to integrate other approaches or
+develop their own approach easily.
 
 Like what we did for the device abstraction, here we design a similar mechanism
 which is a hierarchical architecture shown as \autoref{fig:fw-skeleton-tracker}
@@ -589,35 +615,35 @@ that can support real-time skeleton tracking with good extensibility without
 any GPU device needed.
 From the implementation point of view, firstly, we abstract the common
 functionalities of the skeleton tracker to create an abstract superclass
-\texttt{OITracker}, which serves as a contract exposed to the users hiding the
-complexity.
-Since our implementation is based on a middle-ware of OpenNI2 named NiTE2
+\texttt{OITracker}, which serves as a contract exposed to the users and hides its
+implementation complexity.
+Our implementation is based on a middleware of OpenNI2 named NiTE2
 mentioned in \autoref{sec:related_work_openiss_nite2}. So we create a concrete
-subclass which inherited from \texttt{OITracker} named \texttt{OINiTETracker}.
+subclass which inherits from \texttt{OITracker} named \texttt{OINiTETracker}.
 It can be seen as an adapter that adapts the NiTE tracking algorithm to our
 framework's data structure.
 Let's go deeper, starting from the method \texttt{readFrame(OITrackerFrame)}.
-Every time a new frame (image) is read from the device, this method will be
+Every time a new frame is read from the device, this method will be
 invoked. Its job is to perform skeleton detection to take the data from the
 NiTE2's data structure and move them to several OpenISS framework's data
 structures which will be eventually packed into \texttt{OITrackerFrame}.
-There are three specialized framework specific data holder classes and their
+There are three specialized framework-specific data holder classes and their
 responsibilities listed below:
 
 \begin{itemize}
-    \item \texttt{OIUserData}, it contains all the data for each single
+    \item \texttt{OIUserData} contains all the data for each single
     detected skeleton.
-    \item \texttt{OIUserMap}, it contains a 2d array with the same resolution
+    \item \texttt{OIUserMap} contains a 2d array with the same resolution
     as the depth image, where the background indicated by 0 and the detected
     skeleton for each person indicated by their user id.
-    \item \texttt{OISkeleton}, it contains a hashmap which the key is the joint
+    \item \texttt{OISkeleton} contains a hashmap which the key is the joint
     type and the value is the position of that joint.
 \end{itemize}
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.6]{figures/framework_inst_tracker.pdf}
-    \caption{How we instantiation tracker specialized framework.}
+    \includegraphics[scale=0.7]{figures/framework_inst_tracker.pdf}
+    \caption{Instantiation of the tracker specialized framework.}
     \label{fig:fw-skeleton-tracker}
 \end{figure}
 
@@ -627,25 +653,25 @@ responsibilities listed below:
 As mentioned in \autoref{sec:fw-design-core-pipeline}, we have the pipeline
 module designed in the core framework. In this chapter, we have
 \texttt{OISkeletonTracker}, \texttt{OIPedestrianDetector} and
-\texttt{OIPersonRecognizer} both implement the \texttt{OIFlowable} interface to
-serve as filters within the pipeline. In order to build up a ReID pipeline for
+\texttt{OIPersonRecognizer} both implementing the \texttt{OIFlowable} interface to
+serve as filters within a pipeline. In order to build up a ReID pipeline for
 our final goal, what we are still missing is a concrete class for the
 \texttt{OIFlowContext} which will be used as the data holder for intermediate
 result generated during the execution of the pipeline.
 For this purpose, we define a class \texttt{OIReIDFlowContext} which extends
 the abstract class \texttt{OIFlowContext}.
-Since we were already known, for ReID task, the pipeline will need to contain
+For ReID task, the pipeline will need to contain
 the concrete implementation of a device, a detector, a recognizer and a viewer.
 Also, all the input and output of these components are
 being defined in the previous sections. So within the concrete context class,
-we just need to define the way we store the temporary results, for example, the
+we need to define the way we store the temporary results. For example, the
 data frame captured from the device, the bounding boxes used to mask out the
 detected person, as well as the way we query them from the latter filter within
 the pipeline.
 In this case, since we have the \texttt{type} of each filter and all of them
-are distinct from each other, so we just base on their type and create
+are distinct from each other, we use their type as a key and create
 different logic when the \texttt{query} or \texttt{save} get called within
-a different implementation of the filter.
+their respective implementation as a pipeline filter.
 
 \section{Summary}
 \label{sec:fw-inst-summary}
@@ -654,7 +680,7 @@ In this chapter, we describe the instantiation and implementation for the
 frozen spots within both the core and specialized frameworks. A lot of focus is
 put on discussing two deep learning-based models' development (detector and
 recognizer) as well as how to integrate them into the specialized framework
-with desire APIs exposed.
-In the next chapter, we will see how can we make use of these hot spots to form
+with the desired APIs exposed.
+In the next chapter, we will see how can we make use of these hot spot classes to form an
 application which can eventually address our research problem.
 % EOF

@@ -3,14 +3,15 @@
 \index{Application}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In this chapter, we will explain in detail how to make use of the framework
-instance we created in \autoref{chap:fw-inst} to build a person
-re-identification application to realize tracking the same person across
-multiple cameras. Besides the main ReID application, we will also introduce other
-applications: skeleton tracking, camera calibration, image alignment
-and green screen image, which are all built on top of our OpenISS framework. With the
-applications added, the architecture of our current system can be shown by
-\autoref{fig:fw-app}.
+In this chapter, we will explain how to make use of the framework
+instance created in \autoref{chap:fw-inst} to build a person
+re-identification application to realize our main goal of tracking the same person 
+across multiple cameras. Besides the main ReID application, we will also 
+introduce other applications: skeleton tracking, camera calibration, image 
+alignment and green screen image, which are all built on top of our OpenISS 
+framework instance.
+With the applications added, the architecture of our current system can be 
+shown by \autoref{fig:fw-app}.
 
 \begin{figure}
     \centering
@@ -22,16 +23,28 @@ applications added, the architecture of our current system can be shown by
 \section{ReID Application}
 \label{sec:fw-app-reid}
 
-In \autoref{sec:fw-design-spec-detector} and
-\autoref{sec:fw-design-spec-recognizer}, we stated the design of the detector
-and recognizer frozen spot. In \autoref{sec:fw-inst-detector} and
-\autoref{sec:fw-inst-recoginzer}, we described how we create hot spot for the
-detector and recognizer adapting to the specific pedestrian detection and
-person retrieval tasks. Also, they all agree with the \texttt{OIFlowable}
-interface to support the pipeline mechanism defined in the core framework.
-In this section, we are going to explain, how we use the framework instance
-described in \autoref{chap:fw-inst} for person re-identification task by
-chaining the proposed hot spots together which is supported by the pipeline module.
+%In \autoref{sec:fw-design-spec-detector} and
+%\autoref{sec:fw-design-spec-recognizer}, we stated our design of both detector
+%and recognizer frozen spots.
+%In \autoref{sec:fw-inst-detector} and \autoref{sec:fw-inst-recoginzer}, we
+%described how we create hot spots for the detector and recognizer frozen spots
+%adapting to the specific person detection and person retrieval tasks.
+%The combination of them can address the person ReID task which is the main 
+%goal 
+%of this thesis.
+%Also, they all agree with the \texttt{OIFlowable}
+%interface to support the pipeline mechanism defined in the core framework.
+%In this section, we are going to explain, how we use the framework instance
+%described in \autoref{chap:fw-inst} for person re-identification task by
+%chaining the proposed hot spots together.
+
+Until now, what we described in the previous chapters is the design and 
+implementation of the framework itself. But it cannot solve our
+concrete ReID problem directly, since they are just pieces of solution for each 
+subproblems. If we would like to use it for a specific task, we need a way to 
+organize these fragments so that they can operate following our expectations.
+Our ReID application is the software we built using our framework instance to 
+address the ReID task which includes person detection and person recognition.
 
 \begin{figure}
     \centering
@@ -44,39 +57,54 @@ chaining the proposed hot spots together which is supported by the pipeline modu
 \end{figure}
 
 As mentioned in \autoref{sec:intro-pbstat}, the person ReID task can be divided
-into two portions one is person detection and other is person retrieval. Since
-we already have these two specialized framework instances. Intuitively, what we
-need to do is just arrange them in a suitable order to make them work properly.
-With such consideration, we propose the ReID pipeline shown as
-\autoref{fig:fw-app-reid-pipeline}, which works in the following manner:
+into two portions: one is person detection and the other is person retrieval. 
+We have already shown how to create two specialized frameworks for each of these 
+two parts. Intuitively, what we
+need to do next is to arrange them in a suitable order to make them work 
+properly together. More specifically, the ReID application workflow can be described as
+following:
 
 \begin{enumerate}
-    \item The raw data flow into the device module from the core framework and
-    being encapsulated as an instance of \texttt{OIFrame}.
-    \item The frame then being passed to the pedestrian detector which is a
+    \item The raw data flow into the device module from the core framework being encapsulated as an instance of \texttt{OIFrame}.
+    \item The frame then being passed to the person detector which is a
     concrete implementation of the abstract \texttt{OIDetector} class invoking
     the deep learning-based model implemented in Python via the cross-language
     module in the core.
     \item The output of the detector specialized framework will be a list of
-    bounding boxes which can use to mask the data frame, each these mask
-    contains the appearance of a person.
+    bounding boxes which can be used to mask the data frame, each of the masked
+    result contains a presence of a person.
     \item These results will flow into the recognizer specialized framework
     which again depends on cross-language module since the corresponding
-    model is also implemented in Python to compare the descriptor among the
-    database.
+    model is also implemented in Python to compute and compare the descriptors 
+    among the database.
 \end{enumerate}
 
-As mentioned in \autoref{sec:fw-design-core-pipeline}, the \texttt{OIPipeline}
-serves as the execution engine for a list of filters, it will call the first
-one then passing the result one after another. So the entry point of the
-application will be the \texttt{flow} method defined in the \texttt{OIFlowable}
-interface which is part of the core framework. What the user needs to do is
-telling the framework how to assemble the filters within the pipeline. That is
-done by creating an instance of the \texttt{OIFlowable} object and invoking the
-\texttt{push} method defined in \texttt{OIPipeline} class to add that object in
-the pipeline.
-Then the framework will take the flow of control within the pipeline, the data
-from the device will be flowed into the pushed filters one by one.
+The process described above make a lot of sense but it requires the application 
+developer to know how all these device module, person detector and person 
+recognizer work, what are their input and output, etc. In most of the case, the 
+application developers don't really care about these internal details, what 
+they want just a working application that can achieve their goal. As a 
+framework solution, we should provide such functionality along with ease of use through abstraction. 
+The application developers tell the framework what they want and the framework takes care of 
+the internal process and return the result directly. That is where the pipeline 
+module in the core framework comes to the picture.
+
+As mentioned in \autoref{sec:fw-design-core-pipeline}, the class 
+\texttt{OIPipeline} serves as an execution engine for a list of filters.
+Filters are the classes which can live within a pipeline instance. They are 
+required to implement the \texttt{OIFlowable} interface. All their input and 
+output are stored inside the instance of the abstract class 
+\texttt{OIFlowContext}.
+For the ReID task, we proposed a pipeline instance shown as
+\autoref{fig:fw-app-reid-pipeline}. Now, with the pipeline instance, the 
+application developer doesn't need to worry about the details anymore
+(i.e. what is the return values of the person detector and how to handle them 
+and pass them to the next filter) 
+since the pipeline will take the program's flow of control.
+What the user needs to do is to tell the framework how to assemble these 
+filters within the pipeline. That is done by creating an instance of a specific 
+filter with type \texttt{OIFlowable} then invoke the \texttt{push} method 
+defined in \texttt{OIPipeline} class and pass that filter as parameter.
 The steps we describe here can be accurately expressed by
 \autoref{algo:fw-app-reid}.
 
@@ -109,37 +137,44 @@ The steps we describe here can be accurately expressed by
     \label{algo:fw-app-reid}
 \end{algorithm}
 
-It is important to notice how the pipeline mechanism works by looking carefully
-through this application. The user calls a function defined in the core, then
-the framework gives the result back without any user interaction according to the
-pipeline the user assembled which is actually the beauty of the framework
-solution.
-It frees the user from knowing how they need to handle the temporary result, in
-this case, what the user want is a working ReID application, they are not
-interested in the person detection or any other thing else. With the pipeline
-module or we can say the framework solution, the user just needs to tell what
-they want and the framework will take care of the rest and return the result
-directly. Also, it enables us to design each specialized framework modularly and
-make these components reusable.
+So with the pipeline module, after assembling the pipeline instance, 
+there is only one step to fire the ReID application. The user of our 
+framework simply invokes one function defined in the core, precisely, the 
+\texttt{flow} method within the class \texttt{OIPipeline}.
+Then the framework gives the corresponding result back without any other user 
+interaction or external programming required.
+What we described above is actually the beauty of a framework solution.
+It frees the user from knowing the temporary result to allow them to focus on 
+their own application development. Also, it is a key feature of a framework 
+solution. The system takes the control of the program which is known as 
+inversion of control.
+With the pipeline module, or we can say, the framework solution, the user just 
+needs to tell what they want and the framework will take care of the rest and 
+return the result directly. Also, it enables a framework developer to design each 
+specialized framework modularly and make these components reusable. Because 
+they don't belong to any specific task anymore and may be used in any other 
+pipeline instances.
 
-In our design, the pipeline module resides in the core which doesn't know
-anything about the specialized frameworks. But with the interface defined,
-it enables the hot spot which may be created the latter to make use of the pipeline.
-All the thing need to be done is creating an instance of the context.
-Because of the fact that the pipeline only contains the type of abstract
-class and the data flow is defined by the abstract methods, it will not affect
-the final functionality of the pipeline but makes the it pluggable and robust.
+%In our design, the pipeline module resides in the core which doesn't know
+%anything about the specialized frameworks. But with the interface defined,
+%it enables the hot spot which may be created later on to make use of the 
+%pipeline.
+%All the things need to be done is just creating an instance of the context.
+%Because of the fact that the pipeline only contains the type of abstract
+%class and the data flow is defined by the abstract methods, it will not affect
+%the final functionality of the pipeline but makes the it pluggable and robust.
 
-\section{Skeleton Tracking}
+\section{Skeleton Tracking Application}
 \label{sec:fw-app-skt}
 
 As mentioned in \autoref{sec:intro-sq-skt}, we would like to keep the
 functionality of skeleton tracking originally designed for ISSv2. To achieve
-that, We define a set of frozen spots in \autoref{sec:fw-design-spec-tracker}
+that, we defined a set of frozen spots in \autoref{sec:fw-design-spec-tracker}
 and create a specific hot spot for these frozen spots by adapting the
 implementation from NiTE2 in \autoref{sec:fw-inst-tracker}.
 
-The workflow of the tracker instance shown as \autoref{fig:fw-skeleton-workflow}.
+The workflow of the tracker instance is depicted in 
+\autoref{fig:fw-skeleton-workflow}.
 Firstly, the tracker factory \texttt{OITrackerFactory} will take a concrete
 class of \texttt{OIDevice} and create the instance of a concrete tracker but
 return a reference of its superclass \texttt{OITracker}. Secondly, the tracker
@@ -148,37 +183,37 @@ the concrete class of \texttt{OITrackerFrame}, in our case,
 \texttt{OINiTETrackerFrame}. Finally, the gathered data will be sent to
 the viewer and draw the skeleton out for the user.
 In \autoref{fig:fw-skeleton-workflow}, the box in orange (NiTE2) is one of the
-possible implementation. It can be replaced by any other implementation by
+possible implementations. It can be replaced by any other implementation by
 passing different indicators to the tracker factory.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/framework_oitracker_workflow.png}
     \caption[Tracker module interactive diagram]
-    {Tracker module interactive diagram,
+    {Tracker module interaction diagram,
         the boxes in blue are our framework's components, the box in
         orange is the concrete tracking algorithm implementation, the boxes in
         gray are the low level components.}
     \label{fig:fw-skeleton-workflow}
 \end{figure}
 
-In \autoref{sec:fw-inst-tracker}, we show that the \texttt{OISkeletonTracker}
-class also agree with the \texttt{OIFlowable} interface which means that the
+In \autoref{sec:fw-inst-tracker}, we showed that the \texttt{OISkeletonTracker}
+class implements the \texttt{OIFlowable} interface which means that the
 skeleton tracking application will work in the same manner as our ReID
-application. With the pipeline mechanism introduced, our first step will be
-creating a corresponding skeleton tracking pipeline shown as
+application. With the pipeline mechanism introduced, our first step is to
+create a corresponding skeleton tracking pipeline shown as
 \autoref{fig:fw-app-skt-pipeline}, then we instantiate the a device filter as
 input, a tracker filter to perform tracking and a viewer filter for display.
 Next, as what we did for ReID application, we have to create a concrete
 \texttt{OIFlowContext} for the skeleton tracking task named
 \texttt{OISktFlowContext}.
-Finally, invoke the \texttt{flow} method of the pipeline instance.
+Finally, we invoke the \texttt{flow} method of the pipeline instance.
 The procedure can be described as \autoref{algo:fw-app-skt}.
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{figures/framework_app_skt_pipeline.pdf}
     \caption[Skeleton tracking application pipeline]
-    {Skeleton tracking application pipeline, the solid line arrow represents
+    {Skeleton tracking application pipeline. The solid line arrow represents
     the pipeline execution order and the dash line arrow represents the
     data flow.}
     \label{fig:fw-app-skt-pipeline}
@@ -213,13 +248,15 @@ The procedure can be described as \autoref{algo:fw-app-skt}.
 \section{Other Applications}
 \label{sec:Impl-fw-app-other}
 
-Besides the main person re-identification application, we have also implemented
+Besides the main person re-identification and the skeleton tracking 
+application, we have also implemented
 some other applications to show the usability of our framework. All the
 available samples can be found under the path \texttt{OpenISS/samples/}.
 Currently, we have the sample applications shown as \autoref{tab:fw-avail-apps}.
 Like most of the popular frameworks did, the samples not only prove our
-framework is useful but also sever as the learning material for the users of
-our framework to learn how to use our APIs.
+framework is useful but also serves as the learning material for the 
+application developers who want to build software using our framework to learn 
+how to use our APIs.
 In this section, we will examine some of the applications with their
 supported theory behind and the implementation detail.
 
@@ -229,36 +266,42 @@ supported theory behind and the implementation detail.
         \hline
         Sample Name & Description
         \\ \hline
-        calib.cpp           & \begin{tabular}[c]{@{}l@{}}Camera calibration
-            application, can be used to calibrate camera\\ by input
-            checkerboard
-            images.\end{tabular}
+        {\texttt{calib.cpp}}           
+        & \begin{tabular}[c]{@{}l@{}}
+        	Camera calibration application, which can be used to calibrate 
+        	camera\\ by inputting checkerboard images.
+        \end{tabular}
         \\ \hline
-        kinect\_capture.cpp & \begin{tabular}[c]{@{}l@{}}Minimum Kinect
-            application, streaming both color and depth \\ image of the scene
-            in
-            real time and display
-            them.\end{tabular}
+        {\texttt{kinect\_capture.cpp}}
+        & \begin{tabular}[c]{@{}l@{}}
+        	Minimum Kinect application, it can stream both color and depth \\ 
+        	image of the scene in real time and display on the screen.
+        \end{tabular}
         \\ \hline
-        kinect\_sklt.cpp    & Skeleton tracking application by using
-        Kinect.
+        {\texttt{kinect\_sklt.cpp}}
+        & Skeleton tracking application using Kinect devices.
         \\ \hline
-        rs\_capture.cpp     & \begin{tabular}[c]{@{}l@{}}Minimum RealSense
-            application, streaming both color and \\ depth image of the scene
-            in
-            real time and display
-            them.\end{tabular}
+        {\texttt{rs\_capture.cpp}}
+        & \begin{tabular}[c]{@{}l@{}}
+        	Minimum RealSense application, it can stream both color and \\ 
+        	depth image of the scene in real time and display them.
+        \end{tabular}
         \\ \hline
-        rs\_align.cpp       & \begin{tabular}[c]{@{}l@{}}Image alignment
-            application, it can align the depth image to \\ the color image
-            captured by RealSense camera and also filter \\ out the background
-            based on the distance value.\end{tabular}
+        {\texttt{rs\_align.cpp}}
+        & \begin{tabular}[c]{@{}l@{}}
+        	Image alignment application, it can align the depth image to \\ the 
+        	color image captured by RealSense camera and also filter \\ out the 
+        	background based on the distance value.
+        \end{tabular}
         \\ \hline
-        yolo.cpp            & \begin{tabular}[c]{@{}l@{}}Pedestrian detection
-            application based on YOLO v3 algorithm \\ built on top of OpenISS
-            APIs.\end{tabular}
+        {\texttt{yolo.cpp}}
+        & \begin{tabular}[c]{@{}l@{}}
+        	Person detection application based on YOLO v3 algorithm \\ 
+        	built on top of OpenISS APIs.
+        \end{tabular}
         \\ \hline
-        reid.cpp            & Person re-identification application.
+        {\texttt{reid.cpp}}            
+        & Person re-identification application.
         \\ \hline
     \end{tabular}%
     }
@@ -269,27 +312,32 @@ supported theory behind and the implementation detail.
 \subsection{Camera Calibration}
 \label{sec:Impl-fw-app-calib}
 
-Camera calibration, is one of the basic functionality of a computer vision-related library. Because of the limitation of manufacture craft, the intrinsic
-matrix which is important for some tasks is various among cameras. Also, the
-pose of the camera which is described by the extrinsic matrix is another
-significant aspect as well. Camera calibration is a way to obtain both
-intrinsic and extrinsic matrices and fix the issue of the distortion in the camera.
+Camera calibration, is one of the basic functionality of a computer 
+vision-related library. Because of the limitation of manufacturer craft, the 
+intrinsic matrix which is important for a certain camera application among of computer vision 
+tasks varies across cameras. 
+Also, the pose of camera which is described by the extrinsic matrix is 
+another significant parameter as well. 
+Camera calibration is a way to obtain both intrinsic and extrinsic matrices as 
+well as fixing the distortion issue of the cameras.
 
 \subsubsection{Pinhole Model}
 
-As we know, most of the cameras are using the pinhole model illustrated as
-\autoref{fig:fw-pinhole} to capture images. $P(x, y, z)$ is a 3D point in real-world, $P'(x', y')$ is the corresponding point in the 2D image plane and $f'$
-is the focal length.
-The pinhole model can be imagined as a mapping between the real world 3D point
-and the imager 2D point:
+Most of the cameras are using the pinhole model to capture images. 
+The pinhole model can be shown as \autoref{fig:fw-pinhole}, where $P(x, 
+y, z)$ is a 3D point in the real-world, $P'(x', y')$ is the corresponding point in 
+the 2D image plane and $f'$ is the focal length.
+What a camera does can be imagined as a mapping relation between the real 
+world 3D point and the image's 2D point, illustrated as \autoref{eq:cam}.
+If we know the real world poin'st $P$ coordinate, by applying trigonometric 
+calculations, we can calculate the coordinate of $P'$ using 
+\autoref{eq:pinhold-cartes}.
 
 \begin{equation}
+\label{eq:cam}
 P=\left[ \begin{array}{l}{x} \\ {y} \\ {z}\end{array}\right] \rightarrow
 P^{\prime}=\left[ \begin{array}{l}{x^{\prime}} \\ {y^{\prime}}\end{array}\right]
 \end{equation}
-
-If we know the real world point $P$ coordinate, by applying similar triangles
-theory, we can calculate the coordinate of $P'$:
 
 \begin{equation}
 \label{eq:pinhold-cartes}
@@ -300,31 +348,33 @@ theory, we can calculate the coordinate of $P'$:
 
 \subsubsection{Distortions Removal}
 
-Due to the fact that pinhole cameras may introduce a lot of distortion to
-images, there are mainly two kinds of distortions, radial and tangential
-distortion, illustrated by \autoref{fig:fw-rad-dis} and
-\autoref{fig:fw-tan-dis}.
-
-\begin{figure}
-    \begin{center}
-        \includegraphics[scale=0.8]{figures/framework_calibration_radial_distortion.png}
-    \end{center}
-    \caption{Radial distortion}
-    \label{fig:fw-rad-dis}
-\end{figure}
-
-\begin{figure}
-    \begin{center}
-        \includegraphics[scale=0.8]{figures/framework_calibration_tangentialdistortion.png}
-    \end{center}
-    \caption{Tangential distortion}
-    \label{fig:fw-tan-dis}
-\end{figure}
-
+Due to the fact that pinhole cameras may introduce distortion to images, we 
+need to understand what is the kind distortion, then figure out how to fix it. There are mainly 
+two kinds of distortions, radial and tangential distortion, illustrated by 
+\autoref{fig:fw-app-dis}.
 According to \cite{paper-camera-calibration}, radial distortion can be solved by
 \autoref{eq:radial} and tangential distortion can be solved by
 \autoref{eq:tangential}. Then eventually, we need to find five parameters to
 describe this model, formulated as \autoref{eq:disortion-model}.
+
+\begin{figure}[ht]
+    \centering
+    \vbox{\begin{subfigure}
+        \centering
+        \includegraphics[width=.7\linewidth]{figures/framework_calibration_radial_distortion.png}
+        \label{fig:fw-rad-dis}
+    \end{subfigure}}
+    \vbox{\begin{subfigure}
+        \centering
+        \includegraphics[width=.6\linewidth]{figures/framework_calibration_tangentialdistortion.png}
+        \label{fig:fw-tan-dis}
+    \end{subfigure}}
+    \caption[Two kinds of distortions model]
+    {Two kinds of distortion models, the first row represents radial distortion,
+        the second row represents tangential distortion 
+        \protect\cite{camera-calibration-mathworks}.}
+    \label{fig:fw-app-dis}
+\end{figure}
 
 \begin{equation}
 \begin{aligned} x_{\text {corrected}} &=x\left(1+k_{1} r^{2}+k_{2} r^{4}+k_{3}
@@ -351,7 +401,7 @@ y^{2}\right)+2 p_{2} x y\right] \end{aligned}
 
 Observed from \autoref{eq:pinhold-cartes}, division is not a linear
 transformation which is not convenient for calculation. So we move the
-coordinate from Cartesian to Homogeneous to make the formula linear
+coordinate from Cartesian to homogeneous to make the formula linearly
 computable, also assuming optical center at $(u_0, v_0)$, pixel shape is
 square, no skew exists and no restriction to the camera pose.
 Then their relation can be concluded by \autoref{fig:fw-ins-exs-mat} and
@@ -360,8 +410,9 @@ is the extrinsic matrix, $R$ is the rotation matrix and $\overline{t}$ is the
 translation vector.
 
 \begin{figure}
-    \includegraphics[width=\linewidth]{figures/framework_pinhole_camera.png}
-    \caption{Pinhole camera model}
+	\centering
+    \includegraphics[scale=0.4]{figures/framework_pinhole_camera.png}
+    \caption{Pinhole camera model.}
     \label{fig:fw-pinhole}
 \end{figure}
 
@@ -382,43 +433,43 @@ P^{\prime} = \left[ \begin{array}{ccc}{f} & {0} & {u_{0}} \\ {0} & {f}
     \label{fig:fw-ins-exs-mat}
 \end{figure}
 
-\subsubsection{Solve Distortion coefficient, Intrinsic and Extrinsic Matrices}
+\subsubsection{Solving Distortion coefficient, Intrinsic and Extrinsic Matrices}
 
-In camera calibration problem, we need to perform a reversed computation which
-$P$ and $P'$ are known, the unknown are the intrinsic and extrinsic matrices.
-So we need to provide some sample images with well-defined pattern (most of the
-case will be checkerboard). Then we detect the corners which their positions are
-known. Finally, we solve the equation system to get our target $K$ and $E$ as
-well as the distortion coefficient.
+In the camera calibration problem, we need to perform a reverse computation in which
+$P$ and $P'$ are known, the unknown being the intrinsic and extrinsic matrices.
+So we need to provide some sample images with well-defined pattern 
+(typically a checkerboard). Then we detect the corners of the image whose  
+positions are known. Finally, we solve the equation system to get our target 
+$K$ and $E$ as well as the distortion coefficient.
 
-Since we already have OpenCV as our dependencies and its has the functionality
-that can help us to solve those equations what we need to do just input a set
-of image with the pre-defined pattern. We break the implementation into the
-methods shown as \autoref{fig:fw-cam-calib-impl}, the detailed explanation
-listed below. A sample result can be found through \autoref{label}.
-
-\begin{figure}
-    \includegraphics[width=\linewidth]{figures/framework_calibration_impl.png}
-    \caption{Functions defined for camera calibration application.}
-    \label{fig:fw-cam-calib-impl}
-\end{figure}
+We already have OpenCV as our dependencies and it has the functionality
+that can help us to solve those equations. So what we need to do just input a 
+set of images with the pre-defined pattern. 
+We break the implementation into several methods, the detailed explanation for 
+each of them are listed below. A sample result can be found through 
+\autoref{fig:fw-app-calib}.
 
 \begin{enumerate}
-    \item \texttt{prepareFileName}, it takes a directory contains all the images
-    used for calibration as input, extracts their file path and put them into a
+    \item \texttt{prepareFileName}, takes a directory that contains all the images
+    used for calibration as input, extracts their file path and puts them into a
     vector.
-    \item \texttt{prepareObjChessboardCorners}, it will prepare the pre-defined
-    pattern of the corner and store them into a vector.
-    \item \texttt{loadTestingImgAndFindCorner}, it will invoke OpenCV to load
-    the image into memory and using Haris-Corner detector to find a certain
-    amount of corner point within all loaded images.
-    \item \texttt{runCalibration}, it will take the pre-defined corners and the
-    detected corner applying the theory described in the previous section and solve
-    the equation to find the distortion coefficient, intrinsic and extrinsic
-    matrices.
+    \item \texttt{prepareObjChessboardCorners}, prepares the pre-defined
+    pattern of the corner and stores them into a vector.
+    \item \texttt{loadTestingImgAndFindCorner}, invokes OpenCV to load
+    the image into memory and uses Haris-Corner detector to find a certain
+    amount of corner points within all the loaded images.
+    \item \texttt{runCalibration}, takes the pre-defined corners and the
+    detected corners as input applying the theory described in the previous 
+    section and solve the equation to find the distortion coefficient, 
+    intrinsic and extrinsic matrices.
 \end{enumerate}
 
-% todo: calibration 的照片
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figures/framework_app_calib.png}
+    \caption{Example usage for camera calibration application.}
+    \label{fig:fw-app-calib}
+\end{figure}
 
 \subsection{Image Alignment}
 \label{sec:Impl-fw-app-align}
@@ -426,12 +477,13 @@ listed below. A sample result can be found through \autoref{label}.
 Since in our solution, we target the depth cameras as the input device, in such
 case, we will have not only the normal RGB image but also the depth image (an
 image where the value in each pixel is the distance of the object away from the
-depth sensor). Take Kinect v2 as an example, from \autoref{fig:fw-kinectv2} we
-can obviously found that the RGB and depth (IR) sensor are not at the same
-the place which means these two images for the same scene cannot be mapped pixel to
-pixel directly. \autoref{fig:fw-raw-image} shows an sample image pair before
-alignment, we can found that the person is closer to the image
-right-edge in the left than it in the right image.
+depth sensor). Take Kinect v2 as an example: from \autoref{fig:fw-kinectv2} we
+found that the RGB and depth (IR) sensor are not at the same
+position on the camera housing which means that these two images for the same scene cannot be mapped 
+pixel to pixel directly. 
+An sample image pair before alignment can be shown as 
+\autoref{fig:fw-raw-image}. We can see that the person is closer to the image
+right-edge in the left image than that in the right image.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/framework_kinectv2.png}
@@ -447,52 +499,51 @@ right-edge in the left than it in the right image.
     \label{fig:fw-raw-image}
 \end{figure}
 
-In this case, what we actually want to do is to align depth image coordinate to
-color image coordinate. More precisely, you are given two types of  image taken
+In this case, what we actually want to do is to align the depth image coordinates to the 
+color image coordinates. More precisely, given the two types of image taken
 for the same scene at the same time, one is the depth image $I_{depth} = (a, b,
 depth)$ and the other is the color image $I_{color} = (m, n, intensity)$. For
-each pixel in $I_{depth}$, you are asked to find the corresponding point, where
+each pixel in $I_{depth}$, the alignment problem is to find the corresponding point, where
 $realworld(m, n) = realworld(a, b)$, in
 $I_{color}$ and expand it to be $(m, n, intensity, depth)$.
 
-Assume we already known the matrices of both depth and color cameras denoted by
+Assuming that we already know the matrices of both depth and color cameras denoted by
 $K_{intrinsic}^{depth}$, $E_{extrinsic}^{depth}$, $K_{intrinsic}^{color}$ and
 $E_{extrinsic}^{color}$, then we loop over all the pixels in the depth image and
 try to re-project them onto the color image plane. For each pixel in the depth
-image $p_{depth}(x, y)$, we perform:
+image $p_{depth}(x, y)$, we perform the following operations. In our solution, 
+this work is done by \texttt{OIAligner} class shown as
+\autoref{fig:fw-aligner}.
 
 \begin{enumerate}
-    \item using $K_{intrinsic}^{depth}$ and $E_{extrinsic}^{depth}$, we can
+    \item With $K_{intrinsic}^{depth}$ and $E_{extrinsic}^{depth}$, we can
     project $p_{depth}(x, y)$ back to the real world coordinate to get
     $P(x', y', z')$.
-    \item using $K_{intrinsic}^{color}$ and $E_{extrinsic}^{color}$, we capture
-    the re-prejected point $P(x', y', z')$ and compute its corresponding
+    \item With $K_{intrinsic}^{color}$ and $E_{extrinsic}^{color}$, we capture
+    the re-projected point $P(x', y', z')$ and compute its corresponding
     point $p_{color}(x'', y'')$ in the color image plane.
 \end{enumerate}
-
-In our solution, this work is done by \texttt{OIAligner} class shown as
-\autoref{fig:fw-aligner}.
 
 \begin{figure}
     \centering
     \includegraphics[scale=1.0]{figures/framework_oialigner.pdf}
-    \caption{UML diagram of OIAligner class}
+    \caption{UML class diagram of {\texttt{OIAligner}} class}
     \label{fig:fw-aligner}
 \end{figure}
 
 \subsection{Green Screen Image}
 \label{sec:Impl-fw-app-green-img}
 
-Green screen image, is a technique which is widely used in the film industry
-originally means that we shoot a clip in front of a green backdrop then we
-apply whatever background we need to replace it.
-In our case, we use this world for background removal. Basically, it allows us
-to remove useless information of the scene depends on the depth value which
-maybe useful in some situations. For example, for person recognition task,
+Green screen image, is a technique which is widely used in the film industry. 
+The originally idea is that we shoot a clip in front of a green backdrop then we
+apply whatever background we need to replace the green part of the captured image.
+In our case, we use this technique for background removal. Basically, it allows us
+to remove useless information of the scene depending on the depth value which
+maybe useful in some situations. For example, for the person recognition task,
 some models may expect the input just to be the person itself without any
-other noise, then this functionality will become extremely helpful.
+other noise, then this functionality becomes extremely helpful.
 
-In our implementation, we provide a GUI interface for the users to determine
+In our implementation, we provide a GUI for the users to determine
 only to keep the information based on a depth value threshold. This function
 deeply relies on the two functionalities we mentioned above: camera calibration
 and image alignment. Only when the image is aligned, we are able to filter out
@@ -511,18 +562,35 @@ application can be shown as \autoref{fig:fw-greenscreen}.
 
 In this chapter, we introduced the applications which make use of our framework
 instance proposed in \autoref{chap:fw-inst}. In the ReID application, we mainly
-focus on the pipeline philosophy which is the most valuable point of our
-framework. With such a  mechanism, we can integrate components into the
-framework easily, while maintaining a good modularity design and these
+focus on the pipeline design architecture provided by our framework, which is the most valuable point of our
+framework in this case. With such a mechanism, we can integrate components into the
+framework easily, while maintaining a good modular design and these
 components can be reused for various tasks.
-Then we described other three more applications which are common and basic
-within the computer vision library/framework. The camera calibration allows us to
-obtain more accurate intrinsic and extrinsic matrices, the image alignment
-enable us to map the depth image to the color image pixel by pixel and the
+Then we described three more applications which are common and basic
+within computer vision libraries frameworks. 
+The camera calibration allows us to obtain more accurate intrinsic and 
+extrinsic matrices, the image alignment
+enables us to map the depth image to the color image pixel by pixel and the
 green screen image makes use of the previous two and provides background
-removal functionality may be used in various situations.
-In the next chapter, we will evaluate our framework using common metrics
-and according to our proposed requirements in both objectiveness and
-subjectiveness ways.
+removal functionality that proves useful in various situations.
+In the next chapter, we will evaluate our framework solution according to our 
+proposed requirements and demonstrate how well our solution can achieve using 
+common metrics acknowledged by the community.
 
 % EOF
+
+
+% ********************************************
+% 提纲
+%
+% 1. ReID 应用
+%   - 以前介绍的是 framework，引入 application
+%   - 如果是 library 的话，怎么写，引入 pipeline
+%   - pipeline 有什么好
+%   - pipeline 怎么应用在这里
+% 2. Skeleton tracking 应用
+% 3. 其他应用
+%   - camera calibration
+%   - image alignment
+%   - green screen image
+% ********************************************

@@ -1,4 +1,4 @@
-\chapter{Result and Evaluation}
+\chapter{Results and Evaluation}
 \label{chap:Evaluation}
 \index{Results and Evaluation}
 
@@ -14,32 +14,34 @@
 %requirement and usage scenarios we defined in \autoref{sec:intro-mot-goal} and
 %\autoref{sec:intro-scen-req}.
 
-In this chapter, we will first evaluate our framework solution to show that we
-achieve the goal we set up at the very beginning in \autoref{sec:intro-mot-goal}
-and both the functional and non-functional requirements listed in
-\autoref{sec:intro-scen-req} are fulfilled as well as the scenarios are
-realized by the application we described in \autoref{chap:fw-app}.
-After demonstrating we can achieve the goal, we also would like to tell how
+In this chapter, we will first evaluate our framework solution 
+to show that we achieve the goal we set up at the very beginning in 
+\autoref{sec:intro-mot-goal}.
+Also, both the functional and non-functional requirements listed in
+\autoref{sec:intro-scen-req} are fulfilled and the scenarios are
+realized by the applications we described in \autoref{chap:fw-app}.
+As we are demonstrating that we can achieve the goal, we also want to analyze how
 well we can do it. So we describe the common metrics which are acknowledged by
-the corresponding research community. Then we employ exactly the same approach
-to evaluate our algorithms (or models) and report our result respect to these
+the research community. Then we employ exactly the same approach
+to evaluate our algorithms (or models) and report our result with respect to these
 metrics.
 
 \section{Framework Evaluation}
 \label{sec:Eval-framework}
 
 We proposed a framework approach in \autoref{chap:fw-design} to address the
-limitation we mention in \autoref{sec:intro-lim-issv2} and listed both the
-functional and non-functional requirements in \autoref{sec:intro-scen-req}.
+limitations we have identified in \autoref{sec:intro-lim-issv2} and fulfill the requirements 
+listed in \autoref{sec:intro-scen-req}.
 %In the previous section, we have already shown the evaluation result for the algorithms
 %(or models) used for person detection and person recognition problems.
 %In this section, we are going to demonstrate the advantages of our framework
 %solution and shown that this approach makes it more valuable than just solve it
 %by a piece of program.
-In this section, we will examine the requirements and scenarios one by one to show
-how our solution addresses them. Also, we are going to demonstrate the advantages
+In this section, we will examine the requirements and scenarios one by one to 
+show how our solution addresses them. 
+While doing so, we will also demonstrate the advantages
 of our framework solution and show that this approach makes it more valuable and
-interesting than just solve it by a piece of program.
+interesting than just solve it by a more simple non-framework solution.
 
 %\subsection{Realization of Scenarios}
 %\label{sec:Eval-scenarios}
@@ -53,67 +55,67 @@ interesting than just solve it by a piece of program.
 \label{sec:Eval-framework-device}
 
 As mentioned in \autoref{sec:fw-inst-device}, we have a device module that
-provide
-the abstraction of various physical devices for the framework that would enable
-the switch among various devices easily and also will not increase the
-complexity a lot of adding a new device.
+provides an abstraction layer for various physical devices
+that would enable the switch among different devices easily and also will not 
+prohibitively increase the complexity of adding a new device.
 
-\textbf{Device switch:}  For both Kinect and RealSense cameras we provide a
-minimum working sample code for the users to see how to use it (as a starting
-point). These code can be found under the path
+\textbf{Device switch:}  For both Kinect and RealSense cameras, we provide a
+minimum working sample code for the users to see how to use them (as a starting
+point). The code can be found under the path
 \texttt{sample/kinect/kinect\_capture.cpp} and
 \texttt{sample/rs435/rs\_capture.cpp}. From these two files, we can find that
-the only differences between them are just one line code (even we can say
+the only differences between them are just one line of code (even we can say
 just one word changed to switch between Kinect and RealSense), shown by
-\autoref{fig:fw-device-diff}. It clearly demonstrated that our solution
-fulfill \textbf{FR1} proposed in \autoref{sec:intro-sq-dev}.
+\autoref{fig:fw-device-diff}. This clearly demonstrates that our solution
+fulfills \textbf{FR1} proposed in \autoref{sec:intro-sq-dev}.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/framework_device_diff.png}
     \caption[Effort needed to switch between different cameras]
-    {Effort needed to switch between different cameras, left is code for Kinect
-        and right is the code with same effect for RealSense.}
+    {Effort needed to switch between different cameras, left is the code for Kinect
+        and right is the code with the same effect for RealSense.}
     \label{fig:fw-device-diff}
 \end{figure}
 
 \textbf{New device addition:} Since we have an abstraction layer on top of each
 concrete device implementation, we have to admit that when we try to add a new
 device it will introduce a little bit more work compared to we don't have any
-abstraction. But if we look at the convenience (one word changed for adding new
-device) it brings to us we believe everyone agrees it is necessary. Under our
-design of the framework, you will need to following steps to add a new device.
-It is evidence which can clearly demonstrate that we fulfill
+abstraction. But if we look at the convenience (one word changed for switching 
+between Kinect and RealSense device) 
+the abstraction layer brings to us we believe everyone will agree that introducing 
+a minimal amount of additional work is necessary. 
+Under our design of the framework, a developer needs to following steps to add a 
+new device. It is evidence which can clearly demonstrate that we fulfill
 \textbf{FR2} proposed in \autoref{sec:intro-sq-dev}.
 
 \begin{enumerate}
-    \item Create a new class inherited from \texttt{OIDevice} and implement all
+    \item Create a new class inheriting from \texttt{OIDevice} and implement all
     its pure virtual methods under the directory \texttt{src/}.
-
     \item Since we employed the factory design pattern, you still need to add
     the logic to instantiate the appended device in \texttt{OIDeviceFactory}
-    class as well as the device-related memory deallocation when it is useless.
+    class as well as the device-related memory deallocation when it hs become useless.
 \end{enumerate}
 
 \subsection{Back-end Abstraction}
 \label{sec:Eval-framework-backend}
 
-As explain in \autoref{sec:intro-mot-goal}, we want the OpenISS framework can
-serve
+As explained in \autoref{sec:intro-mot-goal}, 
+we want the OpenISS framework to serve
 as a back-end of our previous work ISSv2. The image alignment application we
 introduced in \autoref{sec:Impl-fw-app-align} is a good showcase for it. In this
 application,  no matter what kinds of camera you are using,
-the low-level APIs like \texttt{OIDevice} abstract the physical
-device providing the operands (e.g. intrinsic, extrinsic matrices and the data
+the low-level APIs like \texttt{OIDevice} will abstract the physical
+device and provide the operands (e.g. intrinsic, extrinsic matrices and the data
 for each frame) needed for the image alignment computation. Then the aligned
 frame will be encapsulated as an OpenISS data structure \texttt{OIDataFrame}
-and return to the user.
-These processes, abstraction and encapsulation, are the core ideas of a
+and returned for further usage.
+These processes, abstractions and encapsulations, are the core ideas of a
 back-end system which provides a set of usable and convenient unified APIs for
 the front-end to request without worrying about the complexity and
 implementation details. The same applies to other applications mentioned in
-\autoref{sec:Impl-fw-app-other}, they all proved that the back-end abstraction
+\autoref{sec:Impl-fw-app-other}. They all proved that the back-end abstraction
 is properly implemented and usable which means the requirements are
-conceptually satisfied.
+in fact satisfied.
 But we have to admit that one more step needs to be done to
 complete the back-end abstraction. Since the ISSv2 was developed in Java and
 our current solution is written in C/C++. A Java wrapper that can expose the
@@ -126,38 +128,135 @@ In \autoref{sec:intro-sq-reid} and \autoref{sec:intro-sq-skt}, we stated the
 scenarios of person re-identification and skeleton tracking. From these two
 scenarios, we extracted requirements related to these two functionalities.
 In \autoref{sec:fw-design-spec}, we described the design of our framework
-solution showing its ability to address the ReID and tracking tasks in general.
+solution demonstrating its ability to address the ReID and tracking tasks in general.
 In \autoref{sec:fw-inst-detector}, \autoref{sec:fw-inst-recoginzer} and
 \autoref{sec:fw-inst-tracker} we described an instance of our framework which
-provides the functionalities that can solve our specific problem. In
-\autoref{sec:fw-app-reid} and \autoref{sec:fw-app-skt}, we described the
+provides the functionalities that can solve our specific person ReID and human 
+skeleton tracking problems. 
+In \autoref{sec:fw-app-reid} and \autoref{sec:fw-app-skt}, we described the
 application built on top of our framework demonstrating how we use our solution
-to solve our specific ReID and skeleton tracking problems.
+to address the problems mentioned above.
 
-The ReID application which described in \autoref{sec:fw-app-reid} clearly
-demonstrated that it can detect the appearance of pedestrian and recognize that
-found particular identity among a pre-defined database, which exactly fulfill
+The ReID application described in \autoref{sec:fw-app-reid} clearly
+demonstrated that it can detect the appearance of person and match that
+particular individual in a pre-defined database, which exactly fulfill
 \textbf{FR4} and \textbf{FR5} proposed in \autoref{sec:intro-sq-reid}.
+A sample result of skeleton tracking from our solution is depicted in 
+\autoref{fig:fw-reid-result}.
 
-The skeleton tracking application which described in \autoref{sec:fw-app-skt}
-clearly demonstrated that it can detect the appearance of pedestrian and
-extract their skeleton points then keep tracking of them which exactly fulfill
-\textbf{FR6} proposed in \autoref{sec:intro-sq-reid}.
+\begin{figure}
+    \begin{center}
+        \includegraphics[width=\linewidth]{figures/reid_result.png}
+    \end{center}
+    \caption[Sample result from our person re-identification application]
+    {Sample result from our person re-identification application. The 
+        bounding box in different colors represents distinct identities recognized 
+        by our solution. In this example, the system finds two identities 
+        matched, the green box represents one on the left and the blue box 
+        represents the other one on the right.}
+    \label{fig:fw-reid-result}
+\end{figure}
+
+The skeleton tracking application that was described in \autoref{sec:fw-app-skt}
+clearly demonstrated that it can detect the appearances of persons and
+extract their skeleton points then keep tracking them, which exactly fulfills
+\textbf{FR6} proposed in \autoref{sec:intro-sq-reid}. A sample result of 
+skeleton tracking from our solution is depicted in \autoref{fig:fw-skeleton}.
+
+\begin{figure}
+    \begin{center}
+        \includegraphics[scale=0.3]{figures/framework_skeleton.png}
+    \end{center}
+    \caption[Sample result from our skeleton tracking solution]
+    {Sample result from our skeleton tracking solution. 
+        Red points represent high confidence and green points represent less 
+        confidence.}
+    \label{fig:fw-skeleton}
+\end{figure}
+
+\subsection{Real-time Response}
+\label{sec:Eval-framework-rt-acc}
+
+Since we want our solution to address the problem in a live artistic 
+performance production, real-time response is a non-functional 
+requirement for our solution. As explained in \autoref{sec:intro-non-func-req},
+we set the real-time response baseline to be 10 FPS.
+To evaluate the whole system's processing ability, we perform an 
+experiment described as below:
+
+\begin{enumerate}
+    \item Create an database containing two target identities. Each of them has
+    3 images captures from camera $C1$.
+    \item Attach another camera $C2$ to the system and run the person 
+    ReID pipeline which includes streaming data from the physical device, 
+    performing person detection, person retrieval, and result visualization.
+    \item Measure the timestamp $t_s$ before the pipeline start and the 
+    timestamp after the system process $500$ frames $t_d$.
+    \item Calculate the frame rate using formula 
+    $\mathit{fr} = \frac{500}{t_e - t_s}$.
+\end{enumerate}
+
+\noindent The result shown that the frame rate of our solution was 12 FPS
+which is slightly higher than the real-time baseline of 10 FPS. It is 
+worthwhile to mention, a controlled experiment, which only takes the data from 
+the device and displays them one the screen, can reach a frame rate of 22 FPS 
+using our solution.
+
+Furthermore, we also want to evaluate the performance strictly from the ReID algorithm
+aspect which means without the time spending on data streaming and 
+result visualization.
+%Since this steps should not be worried by our system, we can probably
+%get more powerful devices and display machines with higher speed 
+%from the market easily.
+For doing so, using the same testing protocol, we only measured the time spending
+on person detection and person retrieval. We performed the same process
+1000 times and calculated the average. For each ReID operation, it takes
+about 0.066 second per image. More specifically, the person detection took
+about 0.051 second while the person retrieval took 0.015 second. So employing
+the frame rate formula, we can obtain the algorithm's time performance which 
+is 15 FPS.
+By analyzing the time spent on each step, we concluded that the bottleneck is the
+person detection part which takes almost 3.5 more time than the time 
+spent on the person retrieval part. The experiments described above were
+conducted on a local desktop machine, its specification can be found in
+\autoref{tab:eval-env-hardware}, referred as \texttt{setting 2}.
+
+\subsection{Accuracy}
+\label{sec:Eval-framework-acc}
+
+In \autoref{sec:intro-non-func-req}, we have identified a non-functional 
+requirement for
+accuracy which stated that our ReID result should be comparable to the state
+of the art methods. Since there is no state of the art for the whole pipeline
+including person detection and person retrieval, we have to compare each part
+separately. 
+
+For the person detection model, ours is 5\% less than the
+original YOLO v3 object detection algorithm on person category in term of mAP. 
+The decrease of performance is due to the fact that we reduce the training 
+labels to become only person and non-person which we believe it can improve the 
+training and the whole ReID process time. Even the accuracy decreased, but it 
+is still a considerably good result among the existing works. More details will 
+be discussed in \autoref{sec:Eval-detection-result}.
+For person retrieval model, ours is ranked $9^{th}$ and $7^{th}$ among the 
+state of the art approaches on Market1501 dataset and DukeMTMC-reid dataset 
+respectively regarding to top-1 accuracy. More details can be found in 
+\autoref{sec:Eval-reid-result}.
 
 \subsection{Extensibility}
 \label{sec:Eval-framework-ext}
 
 In \autoref{sec:intro-non-func-req}, by analyzing the usage scenarios described
 in \autoref{sec:intro-scen-req}. We noticed that our solution should have
-extensibility as its non-functional requirement.
+extensibility as one of its non-functional requirements.
 The device switch and new device addition which we just explained in
 \autoref{sec:Eval-framework-device} is actually a good showcase for it.
-Also, our skeleton tracker instance is another case. As explain in
-\autoref{sec:fw-inst-tracker}, we have a set of frozen spot defined for skeleton
+Also, our skeleton tracker instance implementation is another case. As explained in
+\autoref{sec:fw-inst-tracker}, we have a set of frozen spots defined for skeleton
 tracking, they are \texttt{OITracker}, \texttt{OITrackerFrame},
 \texttt{OIUser}, \texttt{OIUserMap} and \texttt{OISkeleton}. When we want
-integrate an existing tracker or develop a new one, the work will be just to
-create the corresponding hot spots, the process can be described as following:
+to integrate an existing tracker or develop a new one, the work will be just to
+create the corresponding hot spots, the process can be described as the following:
 
 \begin{enumerate}
     \item Create a concrete subclass inherited from \texttt{OITracker} and
@@ -176,55 +275,61 @@ create the corresponding hot spots, the process can be described as following:
 
 What's more, the cross-language module and pipeline module are also showcases
 for extensibility. For the cross-language module, the way to add a new Python
-model (can be implemented with any Python-based deep learning framework) or any
+module (can be implemented with any Python-based deep learning framework) or any
 Python code-base can be described below:
 
 \begin{enumerate}
     \item Make a copy of your existing Python script, let's say with name
-    ``example.py", and all its dependencies into \texttt{project\_root/python/}
-    folder and assume the function we want to expose named ``\texttt{func}".
-    \item Create a C++ wrapper class under \texttt{project\_root/src/}
-    directory, the wrapper class should have a member variable with type
+    ``example.py", and all its dependencies into the \texttt{project\_root/python/}
+    folder and assume the function we want to expose is named ``\texttt{func}".
+    \item Create a C++ wrapper class under the \texttt{project\_root/src/}
+    directory. The wrapper class should have a member variable with type
     \texttt{OIPythonEnv} initialized by the file name (example.py) and target
-    function name (\texttt{func}). Then create a corresponding wrapper
-    function, let's say call ``\texttt{wrapper\_func}", for the Python function
+    function named (\texttt{func}). Then create a corresponding wrapper
+    function, for example ``\texttt{wrapper\_func}", for the Python function
     ``\texttt{func}".
-    \item Create helper functions to pack the parameter(s) and unpack the
+    \item Create helper functions to translate the parameter(s) and unpack the
     return value if needed.
-    \item In the application code, create an instance of the wrapper class,
-    use ``\texttt{wrapper\_func}" as ``\texttt{func}".
+    \item In the application code, create an instance of the wrapper class that
+    uses ``\texttt{wrapper\_func}" as ``\texttt{func}".
 \end{enumerate}
 
 For the pipeline module, the extensibility is reflected by the
 \texttt{OIFlowable} interface. Any class which can act or be expected to act as
-a filter (really common in a computer vision framework) can implement it then
-being pushed into a pipeline instance.
-It is independent from any other modules in the core or specialized framework
+a filter (really common in a computer vision framework) can implement it and then
+be pushed into a pipeline instance.
+Such a filter is then independent from any other modules in the core or specialized framework
 which means it will not have any side effect on the existing implementation but
 just extend them.
-In order to create a new \texttt{OIFlowable} instance, you have to agree with
-interface providing concrete implementation of all abstract methods and create
+In order to create a new \texttt{OIFlowable} instance, the developer has to abide with the
+interface, to provide a concrete implementation of all abstract methods and to create
 a compatible instance of \texttt{OIFlowContext} to work with it.
-Further more, with the pipeline module, the flow of control become more 
-predictable. It means the framework have larger power to hack into each step
-providing more useful functionality. For example, if we have 10 kinds of 
-person recognition algorithms and would like to know the time consuming by each 
-of those in order to select the fastest one. Then we can put two timer filters 
+Furthermore, with the pipeline module, the flow of control becomes more 
+simple and predictable. This enables the framework to provide more diversified processing power and 
+to hack into each processing step providing more useful functionality. For example, if we have 10 kinds of 
+person recognition algorithms and would like to know the performance of each
+of those in order to select the fastest one, then we can put two timer filters 
 right next to the recognizer without changing the code of the recognizer itself.
-That's perfectly fit to the concept of OCP (open-closed principle) which means 
-that software entities should open for extension ,but close for modification. 
+This is a perfect example of OCP (open-closed principle) which means 
+that software entities should be open for extension, but close for modification, 
+which is a cornerstone of software extensibility. 
 
 \subsection{Usability}
 \label{sec:Eval-framework-usab}
 % what it can do
 % can do it with ease
 
-From \autoref{sec:intro-non-func-req}, usability is also one of the
-non-functional requirement of our solution. It requires the software we
-provided can at least achieve the goal we set up at the beginning, then further
-it should also be easy to use from the user point of view.
+From \autoref{sec:intro-non-func-req}, usability has also been identified as 
+one of the non-functional requirements of our solution. 
+%Concretely, by means that the software we
+%provided can at least achieve the goal we set up at the beginning, then further
+%the system and its functionalities should also be easy to use from the user 
+%point of view.
+In this thesis, by usability, we have two meanings. One is that the system is
+usable for our goals and applications, the other is that it should be also 
+user-friendly.
 
-To prove our framework is actually usable, in \autoref{chap:fw-app}, we
+To prove our framework is usable, in \autoref{chap:fw-app}, we
 listed all the sample applications we provided along with our framework.
 These applications can serve as proof clearly show that our framework can
 be used to perform the following tasks:
@@ -243,42 +348,44 @@ be used to perform the following tasks:
           task flexibly.
 \end{itemize}
 
-To demonstrate our framework can be used with ease, the minimum example we
-mention in \autoref{sec:Eval-framework-device} shows that just 14 lines of code
+In term of the solution can be used with ease, currently, we don't have any
+experiment to prove it yet. As an adaptation, we counted the
+number of application level code we need for our scenarios.
+The minimum example we mention in \autoref{sec:Eval-framework-device} shows 
+that in just 14 lines of code
 we can activate the device accessing the data and display them. Also from the
-pedestrian detector sample code \texttt{sample/yolo/main.cpp}, we found
+person detector sample code \texttt{sample/yolo/main.cpp}, we found
 that to enable the whole person detection pipeline and display the result just
-takes 18 lines of code. What's more, for the ReID pipeline, just 36 lines of
-code we can query data from a device, perform the detection and re-identification
-as well as comparison with the database and display the result. Last but not
-least, for advanced users who may want to integrate their custom deep learning
-model the procedure is also straight forward. With our cross-language invocation
-module, all you need to do just create a wrapper class then specified your
-Python script name and the functions you would like to expose, the person
-detection and person recognition described in \autoref{sec:fw-inst-detector}
-and \autoref{sec:fw-inst-recoginzer} respectively are good showcases of it.
-
-
+takes 18 lines of code. What's more, for the ReID pipeline, using only 36 lines 
+of code, we can query data from a device, perform the detection and 
+re-identification as well as comparison with the database and display 
+the result. Last but not least, for advanced users who may want to integrate 
+their custom deep learning model the procedure is also straightforward. With 
+our cross-language invocation module, all you need to do just create a wrapper 
+class then specify your Python script name and the functions you would like to 
+expose. The person detection and person recognition described in 
+\autoref{sec:fw-inst-detector} and \autoref{sec:fw-inst-recoginzer} 
+respectively are good showcases of it.
 
 \section{Person Re-identification Evaluation}
 \label{sec:Eval-reid-app}
 
-Recap what we discuss in \autoref{sec:intro-pbstat}, person ReID task can be
+As discussed in \autoref{sec:intro-pbstat}, the person ReID task can be
 divided into three subtasks: person detection, person tracking and
 person retrieval. In our solution, we have omitted person tracking
 since we performed detection on each incoming frame which has the
-same effect as tracking. The way used to evaluate detection and
+same effect as tracking. The methods used to evaluate detection and
 retrieval algorithms have already been well-defined and acknowledged
 within the community. In this section, we will introduce these
-evaluation methods and report the result we obtained based on our
-implementation.
+evaluation methods and report the results we have obtained by applying 
+these evaluation methods on our implementation.
 
-Before we move to the evaluation methods, we give detail of the
-environment setting we are using both for training and testing.
-There is a total of two environments we have one is a local desktop machine
+Before we move to the evaluation methods, we give the details of the
+environment settings we are using both for training and testing.
+We used two execution environments: one is a local desktop machine
 and the other is the Virya cluster provided by the faculty. The hardware
 specification of these two environments shown as
-\autoref{tab:eval-env-hardware}. We will refer them as \texttt{setting 1}
+\autoref{tab:eval-env-hardware}. We will refer to them as \texttt{setting 1}
 and \texttt{setting 2} respectively in the following content. There is a slight
 difference between the software version installed in these two environments
 shown as
@@ -332,11 +439,12 @@ shown as
 
 In order to measure the quality of the person detector we described in
 \autoref{sec:fw-inst-detector}, we use the metric called ``intersection over
-union(IOU)''.
+union(\acrshort{iou})''.
 It requires a ground truth bounding box $B_{gt}$ and a predicted bounding box
-$B_{p}$. By calculating the IOU metric, we can tell the bounding box this
-detector produced is valid or not. IOU is formulated as \autoref{eq:iou}, can be
+$B_{p}$. By calculating the IOU metric, we can tell the bounding box the
+detector produced is valid or not. IOU is formulated as \autoref{eq:iou}, and can be
 visualized as \autoref{fig:eval-iou}.
+
 
 \begin{equation}
 \label{eq:iou}
@@ -348,15 +456,15 @@ visualized as \autoref{fig:eval-iou}.
         \includegraphics[scale=0.7]{figures/eval_iou.png}
     \end{center}
     \caption[Intersection Over Union metric for object detection]
-    {Intersection Over Union metric for object detection,
-        the green box represents ground truth and the red box represents
-        detection result. The blue area on top represents intersection and
+    {Intersection Over Union metric for object detection.
+        The green box represents ground truth and the red box represents
+        the detection result. The blue area on top represents intersection and
         the one on bottom represents union.}
     \label{fig:eval-iou}
 \end{figure}
 
 With the computed $\mathit{IOU}$ result and a hyper-parameter
-$\mathit{threshold}$ which usually set to $50\%$, $75\%$ or $90\%$,
+$\mathit{threshold}$ which is usually set to $50\%$, $75\%$ or $90\%$,
 we can define the following four terms to describe a detection:
 
 \begin{itemize}
@@ -371,14 +479,14 @@ we can define the following four terms to describe a detection:
 \subsubsection{Precision-Recall Curve}
 \label{sec:Eval-pr-curve}
 
-By analyzing these result, there are two metrics precision and recall can be
+By analyzing these results, the two metrics precision and recall can be
 used to describe how well the model performs in two different aspects.
 Precision \autoref{eq:precision} is a fraction of relevant instances among the
 retrieved instances which can be used to measures how accurate is your
 prediction.
 Recall \autoref{eq:recall} is a fraction of relevant instances that have been
-retrieved over the total amount of relevant instances which can be used to
-measures how good you find all the positives.
+retrieved over the total amount of relevant instances. It can be used to
+measure how good you find all the positives.
 
 \begin{equation}
 \label{eq:precision}
@@ -407,14 +515,14 @@ measures how good you find all the positives.
 %precision), finding all ground-truth objects (0 False Negatives = high recall).
 
 With precision and recall in hand, we can construct a Precision-Recall curve
-(P-R curve) which will be used to calculate our metric latter. The curve
+(P-R curve) which will be used to calculate our metric. The curve
 construction process can be described as the following:
 
 \begin{enumerate}
     \item Collect all the predictions that make for a particular class of
     objects. Rank them in decreasing order according to the confidence score
     given by the model.
-    \item  Compare theses predictions with ground truth to see if it is correct
+    \item  Compare theses predictions with ground truth to see if they are correct
     or not.
     \item Calculate the precision and recall using the given formula for each
     prediction in the ranked list from top to bottom.
@@ -428,16 +536,16 @@ construction process can be described as the following:
 %relevant objects (0 False Positives = high
 %precision), finding all ground truth objects (0 False Negatives = high recall).
 
-An example of the P-R curve can be shown as \autoref{fig:eval-pr-curve}, let's
-examine how the precision and recall being calculated. The first row of the
+An example of the P-R curve can be shown as \autoref{fig:eval-pr-curve}. Let us
+examine how the precision and recall are calculated. The first row of the
 right-hand-side table belongs to the prediction whose confidence score is the
 highest among all the predictions for a particular class. From the table, we
 know that this prediction is true.
-Under the assumption total positive results are 5,
+Under the assumption that the total number of positive results is 5,
 according to \autoref{eq:precision} and \autoref{eq:recall},
 $precision = \frac{1}{1}=1.0$ and $precision = \frac{1}{5}=0.2$
-The third row, with the same pattern. We already have two results (rows) before
-so for the this row,
+We calculate the third row using the same pattern. We already have two results (rows) before
+so for the this row is:
 $precision = \frac{2}{3}=0.67$ and $precision = \frac{2}{5}=0.4$.
 
 \begin{figure}
@@ -451,22 +559,21 @@ $precision = \frac{2}{3}=0.67$ and $precision = \frac{2}{5}=0.4$.
         \includegraphics[width=\linewidth]{figures/eval_pr_curve_data.png}
     \end{minipage}
     \caption[An example of Precision-Recall curve]
-    {An example of P-R curve, left is the curve itself and right is the data
-        used to plot this curve. Assume that there are total five positive
-        among
-        all these data.}
+    {An example of P-R curve. Left is the curve itself and right is the data
+        used to plot this curve, assuming that there is a total of five positives
+        in the data.}
     \label{fig:eval-pr-curve}
 \end{figure}
 
 \subsubsection{Average Precision}
 \label{sec:Eval-ap}
 
-Since the P-R curve is often zigzag which is not easy for comparison, an
-example can be found on \autoref{fig:eval-pr-curve}, then we may want something
-numerical, can be compared directly. Average precision (AP) is such a metric,
-in general, it represents the area under the P-R curve and can be formulated as
+Since the P-R curve is often zigzag which is not easy for comparison, such as shown 
+in \autoref{fig:eval-pr-curve}. We may want to apply a
+numerical transformation that can enable a more direct comparison. Average precision (AP) is such a metric.
+In general, it represents the area under the P-R curve and can be formulated as
 \autoref{eq:ap}. Precision and recall are always within $[0, 1]$, so to compute
-AP we can do integral for the P-R curve within this interval.
+AP we can do an integration of the P-R curve within this interval.
 
 \begin{equation}
 \label{eq:ap}
@@ -485,8 +592,8 @@ AP we can do integral for the P-R curve within this interval.
         \includegraphics[scale=0.25]{figures/eval_pr_curve2.png}
     \end{center}
     \caption[{An example of smoothed Precision-Recall curve}]
-    {An example of smoothed Precision-Recall curve, orange line is the original
-        zigzag curve, green line is the smoothed curve}
+    {An example of smoothed Precision-Recall curve. The orange line is the original
+        zigzag curve, green line is the smoothed curve.}
     \label{fig:eval-pr-curve-2}
 \end{figure}
 
@@ -497,16 +604,16 @@ p_{\text {interp}}(r)=\max _{\widehat{r} \geq r} p(\widetilde{r})
 
 Under the context of object detection, before we compute AP, for simplicity
 purpose we will first smooth the zigzag P-R curve by taking the maximum
-precision at each recall level mathematically represents by
+precision at each recall level mathematically represented by
 \autoref{eq:smooth-pr-curve}.
-After smoothing the curve will look like \autoref{fig:eval-pr-curve-2}. Then we
+After smoothing, the curve will look like \autoref{fig:eval-pr-curve-2}. Then we
 have two kinds of AP: interpolated AP and AP (Area Under Curve, AUC).
 
 \noindent \textbf{Interpolated AP}
 
-\noindent Start from Pascal VOC2008 until VOC2010, an average for the 11-point
-interpolated AP is calculated. We firstly divide the recall value into 11 points
-$[0.0, 0.1, ..., 1.0]$ then we compute the average of maximum precision value
+\noindent Starting from Pascal VOC2008 until VOC2010, an average for the 11-point
+interpolated AP is calculated. We first divide the recall value into 11 points
+$[0.0, 0.1, ..., 1.0]$, then we compute the average of maximum precision value
 for these 11 recall values. Precisely, the calculation can be shown by
 \autoref{eq:interpl-ap}.
 
@@ -519,7 +626,7 @@ for these 11 recall values. Precisely, the calculation can be shown by
 \noindent \textbf{AP (Area Under Curve, AUC)}
 
 \noindent For later Pascal VOC2010-2012, all unique recall values are sampled,
-whenever the maximum precision value drops. With such operation, we are able to
+whenever the maximum precision value drops. With such an operation, we are able to
 measure the exact area under the P-R curve after the zigzags are removed. The
 operation can be expressed using \autoref{eq:ap-auc}.
 
@@ -535,56 +642,55 @@ p_{\text {interp}}
 \right)=\max _{\tilde{r} \geq r_{n+t}} p(\widetilde{r})
 $$
 
-\subsubsection{Experiment Result}
+\subsubsection{Experimental Result}
 \label{sec:Eval-detection-result}
 
-We trained the YOLO model to become a pedestrian detector using VOC2012 dataset
+We trained the YOLO model to become a person detector using the VOC2012 dataset
 as explained in \autoref{sec:fw-inst-detector}, then we perform an in-dataset
 validation. We randomly sample 5823 images from the dataset as validation set
 which never be used for training.
 In the randomly sampled validation set, we have total 4372
 ground truth boxes. During the validation time, 3950 bounding boxes have been
 detected while 3423 of them have been located properly and 527 of them are
-the wrong result shown as \autoref{fig:eval-detector-result}. The IOU threshold is
-set to 0.5 according to the community's common knowledge.
+wrong results, as shown in \autoref{fig:eval-detector-result}. The IOU threshold is
+set to 0.5 according to the literature's common knowledge.
 By performing the detection using our model on the validation set, we have the
-Rrecision-Recall curve shown as \autoref{fig:eval-detector-pr}. Since we only
+Precision-Recall curve shown as \autoref{fig:eval-detector-pr}. Since we only
 have one class, the mAP will be exactly the person's AP (area under curve)
-which is 76.08\% as it is shown on the top of the figure.
+which is 76.08\% as shown on the top of the figure.
 
 For comparison purposes, we used the same model definition training on the same
-dataset but with all 20 classes, the result shown as
+dataset but with all 20 classes, the result are shown as
 \autoref{fig:eval-detector-pr1} and \autoref{fig:eval-detector-result1}. The
-result obtained from the same sampled validation set. The only difference is the
-model used to perform the detection one is the person detection model and the
+result is obtained from the same sampled validation set. The only difference is the
+model used to perform the detection: one is the person detection model and the
 other is the object detection model with 20 classes supported. We can clearly
-find that the result from the object detection model about 5\% outperforms than
-that from the person detection model.
+see that the result from the object detection model about 5\% outperforms the person detection model.
 That is also explainable since the person detection treats the problem like a
-binary classification problem we only train it with person or non-person label
-while the object detection model takes it as multi-classes. With a certain amount
-of data, a multi-classes detector can perform better than a binary detector.
-A straight forward example can be the following. Imagine we have a cat binary classifier
+binary classification problem. We only train it with person or non-person label
+while the object detection model takes it as multiple classes. With a certain amount
+of data, a multi-class detector can perform better than a binary detector.
+A straightforward example can be the following: Imagine we have a cat binary classifier
 and given a tiger image, the cat classifier may take it as a cat but if we have
 another well-trained tiger/cat/dog/fish/etc classifier, then it has a good
 chance to classify it properly.
 
-One more thing needs to be mentioned is that in \autoref{sec:fw-inst-detector}
+One more thing that needs to be mentioned is that in \autoref{sec:fw-inst-detector}
 we claim that by theoretical analysis the object detection model should take
 more time to train. In our experiment with \texttt{setting 2},
 the object detection model takes 504
-minutes to train while the person detection model takes 416 minutes to train
+minutes to train while the person detection model takes 416 minutes to train,
 unlike our analysis which is one-tenth of its object detection sibling.
-That is because we train our model on GPU, with parallel computation
-technique supported, it can perform the calculation concurrently.
+That is because we train our model on a GPU. With parallel computation
+supported, it can perform the calculation concurrently.
 
 With the reduction from object detection to person detection, we even lose 5\% 
 accuracy. It seems we can only reduce the training time and have nothing to do 
-with the inference time, which is actually a bad trade. That's consideration is 
+with the inference time, which is actually a bad trade. However, that consideration is 
 not true. Arguably, if we still use the objection detector, after the detection 
 process we may have a large number of bounding boxes being detected. Then we 
 need to perform NNS to eliminate those overlapping boxes which is time 
-consuming as well as the non-person boxes which is linear time complexity. It
+consuming as well as the non-person boxes which has linear time complexity. It
 is actually a trade-off between time and accuracy.
 Since real-time performance is the hard constraint in our case, we give high
 priority to the time instead of accuracy.
@@ -624,18 +730,18 @@ priority to the time instead of accuracy.
 \subsection{Person Retrieval}
 \label{sec:Eval-reid}
 
-In the evaluation time, we test our person retrieval implementation described
+We test our person retrieval implementation described
 in \autoref{sec:fw-inst-recoginzer} through the following method:
 
 \begin{enumerate}
-    \item We split all the identities we have in the dataset into two parts,
-    one is the training set $T$ and the other is validation set $V$. There is no
+    \item We split all the identities we have in the dataset into two parts:
+    One is the training set $T$ and the other is validation set $V$. There is no
     overlapping between $T$ and $V$ which means $T \cap V = \emptyset$. Each
     identity has a certain number of images captured from different cameras.
 
     \item Then we take all the images corresponding to the identities in $V$,
     further splitting them into query set $Q$ and the gallery set $G$. For each
-    image in $Q$ there must be at least one corresponding image in $G$ shared
+    image in $Q$ there must be at least one corresponding image in $G$ that shares
     the same identity label but captured from different cameras.
 
     \item We use our trained model to extract feature descriptor $f_i^g$ for
@@ -645,30 +751,30 @@ in \autoref{sec:fw-inst-recoginzer} through the following method:
     feature descriptor $f_i^q$, then sort all the descriptors in the database
     according to $\mathit{distance}(f_i^q, f)$ in increasing order.
 
-    \item Find the corresponding identities of the sorted descriptor and return
+    \item We find the corresponding identities of the sorted descriptor and return
     them in the same order.
 \end{enumerate}
 
-Once have the result, we can take a look into two main metrics for the 
+Once we have the result, we can take a look into two main metrics for the 
 person retrieval task.
 
-\subsubsection{Cumulative Matching Characteristics (CMC)}
+\subsubsection{Cumulative Matching Characteristics (\acrshort{cmc})}
 \label{sec:Eval-reid-cmc}
 
-Before we discuss cumulative matching characteristics, we would like to explain
-two possible settings for the dataset.
+Before we discuss cumulative matching characteristics, we explain
+two possible settings for the dataset:
 
 \begin{itemize}
-    \item Single-galley-shot setting,
-    each gallery identify has only one instance (e.g. CUHK03 dataset).
+    \item Single-gallery-shot setting: 
+    each gallery identify has only one instance (e.g. the CUHK03 dataset).
 
-    \item Multi-gallery-shot setting,
+    \item Multi-gallery-shot setting: 
     both query and gallery identity have more than one instance in their own
-    dataset (e.g. Market1501 dataset).
+    dataset (e.g. the Market1501 dataset).
 \end{itemize}
 
-Consider a simple single-gallery-shot setting, for each query, the algorithm
-will rand all the gallery images according to their distance to the query in
+Consider a simple single-gallery-shot setting. For each query, the algorithm
+will rank all the gallery images according to their distance to the query in
 increasing order, then the CMC top-k accuracy is:
 
 \begin{equation}
@@ -685,19 +791,20 @@ increasing order, then the CMC top-k accuracy is:
 \noindent which is a shifted step function. The final CMC curve is computed by
 averaging \autoref{eq:cmc} over all the queries.
 In this thesis, we applied a new splitting method \cite{dataset-cuhk03-np-2017}
-to CUHK03 dataset like the Market1501 and Duke-MTMC dataset did which
+to the CUHK03 dataset like the Market1501 and the Duke-MTMC dataset did which
 originally are multi-gallery-shot setting to ensure the result is comparable.
-Under this setting, query and gallery sets could have same camera views, but
+Under this setting, the query and gallery sets could have the same camera views, but
 for each individual query identity, their gallery samples from the same
 camera are excluded.
 
 \subsubsection{Mean Average Precision}
 \label{sec:Eval-reid-map}
 
-In order to explain mean average precision (mAP), we will first need to
+In order to explain the mean average precision (\acrshort{map}), 
+we will first need to
 introduce several related concepts. In the classification problem, we commonly
-use the following four terminologies to describe the result (even the name is the
-same as the object detection one but the meaning is different here) shown as
+use the following four terminologies to describe the result (even if the name is the
+same as the object detection one, the meaning is different here) shown as
 \autoref{fig:eval-classif-metric}.
 
 \begin{itemize}
@@ -714,9 +821,9 @@ same as the object detection one but the meaning is different here) shown as
     \label{fig:eval-classif-metric}
 \end{figure}
 
-Even though the definition of four concepts are various between the objection detection
+The definition of these four concepts vary between the objection detection
 and ReID tasks. But the formula to calculate precision and recall remain the
-same, \autoref{eq:precision} for precision and \autoref{eq:recall} for recall.
+same \autoref{eq:precision} for precision and \autoref{eq:recall} for recall.
 %If we plot the precision and recall in the same coordinate, where horizontal
 %axis is the recall and the vertical axis is the precision. Then the average
 %precision can be defined as the area under the P-R curve which can be
@@ -728,20 +835,20 @@ same, \autoref{eq:precision} for precision and \autoref{eq:recall} for recall.
 %%\label{eq:ap}
 %%\mathit{AP} = \int_0^1p(r)dr
 %%\end{equation}
-With the knowledge about P-R curve and AP (AUC) described in
-\autoref{sec:Eval-pr-curve} and \autoref{sec:Eval-ap} we can finally give
-definition to mean average precision (mAP), it is the mean of average
-precision, assume we have $N$ queries during the evaluation time then
+With the knowledge about the P-R curve and AP (AUC) described in
+\autoref{sec:Eval-pr-curve} and \autoref{sec:Eval-ap}, we can finally give
+definition to mean average precision (mAP). It is the mean of average
+precision. Assuming we have $N$ queries during the evaluation time then
 
 \begin{equation}
 \label{eq:map}
 \mathit{mAP} = \frac{\mathit{AP}}{N} = \dfrac{\int_0^1p(r)dr}{N}
 \end{equation}
 
-Apply mAP to evaluate retrieval task firstly proposed in
+We apply mAP to evaluate retrieval task firstly proposed in
 \cite{dataset-market1501-2015}. The author argued that in multi-gallery-shot
-setting, CMC cannot provide a fairly comparison between two rank lists, a
-mini-example can be found in \autoref{fig:map-mini-exmaple}. Because that for a ReID
+setting, CMC cannot provide a fair comparison between two rank lists, a simple
+example can be found in \autoref{fig:map-mini-exmaple}. Because that, for a ReID
 system, we would like to know how accurate the prediction can be, not just the
 accuracy among the top $k$ result.
 
@@ -749,9 +856,9 @@ accuracy among the top $k$ result.
     \begin{center}
         \includegraphics[scale=0.7]{figures/eval_cmc_vs_map.png}
     \end{center}
-    \caption[Mini-example for the necessary of AP]
-    {Mini-example for the necessary of AP, green box represents a match
-        while red box means a mismatch. CMC result for all three cases are
+    \caption[Simple example for the necessity of AP]
+    {Simple example for the necessity of AP. The green box represents a match
+        while red box means a mismatch. The CMC result for all three cases are
         1, but AP will be [1, 1, 0.71] respectively.}
     \label{fig:map-mini-exmaple}
 \end{figure}
@@ -761,11 +868,11 @@ accuracy among the top $k$ result.
 
 %Once we defined the network structure, the next step will be training the model
 %on the network.
-Before we go into our experiment and result, let's take a look at the public
+Before we go into our experiment and results, let us take a look at the publicly
 available datasets in this domain. There is a total of three datasets: Market1501
 \cite{dataset-market1501-2015}, CUHK03 \cite{dataset-cuhk03-2014} and Duke-MTMC
-\cite{dataset-dukemtmc-2016}, which have been employed in our implementation we
-are going to introduce, the properties of them shown as
+\cite{dataset-dukemtmc-2016}, which have been employed in our implementation. We
+are going to introduce their properties, shown as
 \autoref{tab:reid-dataset}. We provide an abstraction of the dataset
 illustrated by \autoref{fig:fw-reid-dataset-uml} and currently encapsulate
 these three for our model's training, testing and experiment.
@@ -796,13 +903,12 @@ these three for our model's training, testing and experiment.
 
 \begin{figure}
     \includegraphics[width=\linewidth]{figures/framework_reid_dataset_uml.png}
-    \caption{UML diagrams of ReID dataset abstraction}
+    \caption{UML class  diagram of ReID dataset abstraction}
     \label{fig:fw-reid-dataset-uml}
 \end{figure}
 
-\subsubsection{Experiment Result}
+\subsubsection{Experimental Result}
 \label{sec:Eval-reid-result}
-
 
 \begin{table}[]
     \centering
@@ -855,10 +961,10 @@ these three for our model's training, testing and experiment.
     \label{tab:eval-state-of-art-dukemcmt}
 \end{table}
 
-We perform comprehensive experiments on person re-identification task since it
-is the main goal of this thesis, let's walk through them one by one. In order
-to give the reader a sense how well our model perform, we provide the state of
-the art result obtained from two common datasets shown as
+We perform comprehensive experiments on the person re-identification task since it
+is the main goal of this thesis. Let us walk through them one by one. In order
+to give the reader with a sense of how well our model perform, we provide the 
+state-of-the-art result obtained from two common datasets shown as
 \autoref{tab:eval-state-of-art-market1501} and
 \autoref{tab:eval-state-of-art-dukemcmt}. By observing these two tables, we
 find that all the results from Market1501 are better than that from
@@ -869,12 +975,12 @@ latter.
 As mentioned in \cite{in-defense-of-triplet-loss-for-reid-2017}, there are two
 kinds of triplet loss functions \autoref{eq:batch-all} and
 \autoref{eq:batch-hard}.
-We do a comparison between these two losses and train the model with
-\texttt{setting 2} on the Market1501 dataset, the validation result we have can
-be summarized as \autoref{tab:eval-two-triplet-losses}. Triplet all loss
-perform better than triplet hard loss surprisingly, that is in contrast with
-the result reported by \cite{in-defense-of-triplet-loss-for-reid-2017}, so far
-we don't have a proper explanation for it, our guess is that it may cause by
+We do a comparison between these two loss functions and train the model with
+\texttt{setting 2} on the Market1501 dataset, the validation results can
+be summarized as \autoref{tab:eval-two-triplet-losses}. Surprisingly, triplet all loss
+perform better than triplet hard loss. That is in contrast with
+the result reported by \cite{in-defense-of-triplet-loss-for-reid-2017}. So far,
+we don't have a sound explanation for it. Our guess is that it may be caused by
 the implementation where the paper's implementation is in Pytorch and ours is
 in TensorFlow.
 During the training CMC and mAP metrics, both got improved with time increasing
@@ -906,23 +1012,23 @@ when the training time goes up.
         & 120 & {[}0.878, 0.924, 0.946, 0.955, 0.963{]} & 0.715
         \\ \hline
     \end{tabular}
-    \caption[Validation result on the model trained with Market1501 dataset]
+    \caption[Validation results on the model trained with Market1501 dataset]
     {Validation result on the model trained with Market1501 dataset guided by
         two different loss functions.}
     \label{tab:eval-two-triplet-losses}
 \end{table}
 
 \textbf{Comparison between two environment settings:}
-We also try to train the model in two different settings in the same Market1501
-dataset. And the result can be found by \autoref{tab:eval-two-env}. Obviously,
+We also trained the model in two different settings in the same Market1501
+dataset. The result are expressed in \autoref{tab:eval-two-env}. Obviously,
 with the more powerful hardware in \texttt{setting 2}, the training time is
 much less than it on \texttt{setting 1}.
 %But what surprised us is that the metrics show the result
 %we get from \texttt{setting 1} is slightly better than what we obtain from
 %\texttt{setting 2}.
 Also, as we can see the results obtained from the same loss function are almost
-identical the difference is limited to 0.001 which is under expectation, cause
-in such a computation task we cannot guarantee the result will be exactly the
+identical. The difference is limited to 0.001 which is under expectation. 
+In such a computation task we cannot guarantee the result will be exactly the
 same.
 
 \begin{table}[]
@@ -947,17 +1053,17 @@ same.
     \label{tab:eval-two-env}
 \end{table}
 
-\textbf{Comparison between the result obtained same dataset validation:}
-As we mention in \autoref{sec:eval-recognizer-dataset}, we have an abstraction
+\textbf{Comparison between the results obtained with the same dataset validation:}
+As we mentioned in \autoref{sec:eval-recognizer-dataset}, we have an abstraction
 layer of the ReID dataset which enables us to train on various datasets with
-only few modification (actually just pass different parameter).
+only a few modification (actually just passing different parameters).
 By making use of it, we perform training and validation on three different
-datasets with \texttt{setting 2} and we finally obtain the result shown by
-\autoref{tab:eval-dif-datasets}. From the result, we found that the performance
-on the CUHK03 dataset is poor, we thought that might due to less of training
+datasets with \texttt{setting 2}. We obtained the results shown by
+\autoref{tab:eval-dif-datasets}. From the results, we found that the performance
+on the CUHK03 dataset is poor. We thought that might be due to lesser training
 samples for the identity from distinct cameras (it has total two cameras
 only). And for the other two, since Market1501 is a little be easier than
-DukeMTMC-reID dataset so the result we have currently is under expectation.
+the DukeMTMC-reID dataset, the result we have currently is under expectation.
 
 \begin{table}[]
     \centering
@@ -978,15 +1084,15 @@ DukeMTMC-reID dataset so the result we have currently is under expectation.
     \label{tab:eval-dif-datasets}
 \end{table}
 
-\textbf{Comparison between results obtained from cross dataset validation:}
+\textbf{Comparison between results obtained from cross-dataset validation:}
 Generalization is used to describe how well a model can handle an unseen style
 of data. In order to test the generalization capability of our models, we
-perform across dataset validation experiment which means we train the model on
-$dataset1$ then test it on $dataset2$. Since we were already known the model
-trained with CUHK03 dataset perform poor on this task from the previous
-comparison, we don't take it into consideration. The cross dataset validation
-result shown as \autoref{tab:eval-cros-datasets} with Market1501 and
-DukeMTMC-reID dataset.
+perform a cross-dataset validation experiment which means we train the model on
+$dataset1$ then test it on $dataset2$. Since we have already found that the model
+trained with the CUHK03 dataset perform poor on this task from the previous
+comparison, we don't take it into consideration. The cross-dataset validation
+result is shown as \autoref{tab:eval-cros-datasets} with the Market1501 and
+DukeMTMC-reID datasets.
 From the table, we found that the model trained on DukeMTMC-reID dataset can
 obtain a better generalization ability.
 
@@ -1001,9 +1107,9 @@ obtain a better generalization ability.
             \textbf{mAP} & 0.150 & 0.211 \\ \hline
         \end{tabular}%
     }
-    \caption[Cross dataset validation result between Market1501 and
+    \caption[Cross-dataset validation result between Market1501 and
     DukeMTMC-reID dataset on \texttt{setting 2}]
-    {Cross dataset validation result between Market1501 and DukeMTMC-reID
+    {Cross-dataset validation result between Market1501 and DukeMTMC-reID
         dataset on \texttt{setting 2}. M $\rightarrow$ D represents the model
         trained on Market1501 dataset and tested on DukeMTMC-reID dataset.}
     \label{tab:eval-cros-datasets}
@@ -1015,9 +1121,9 @@ In this chapter, we described the evaluation methods we employed to examine the
 framework solution we proposed in \autoref{chap:fw-design} and
 \autoref{chap:fw-inst}. We first evaluated our two main models for person
 detection and person retrieval respectively with commonly used metrics in their
-domain, then we examined our framework by showing cases to prove it meet the
+domain, then we examined our framework by showing cases to prove that it meets the
 requirements we proposed in \autoref{sec:intro-scen-req}.
-In the next chapter, we will summarize our work, acknowledge the limitation we
+In the next chapter, we will summarize our work, acknowledge the limitations we
 have and point out some potential research paths that can be done in the future.
 
 % EOF

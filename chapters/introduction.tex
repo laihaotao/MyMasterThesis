@@ -3,9 +3,8 @@
 \index{Introduction}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 In this chapter, we will first introduce our team's previous work named 
-Illimitable Space System (ISS) then point out the pain spots we encounter when 
+\acrlong{iss} (\acrshort{iss}) then point out the pain spots we encounter when 
 using it.
 Motivated by these issues, we propose the goal we would like to
 achieve in this thesis.
@@ -23,25 +22,26 @@ performance on the stage with one camera. Some example images of our
 performance are shown as~\autoref{fig:bg}.
 
 \begin{figure}[ht]
-    \begin{subfigure}
+    \centering
+    \vbox{\begin{subfigure}
         \centering
         \includegraphics[width=.8\linewidth]{figures/bg1.png}
         \label{fig:sub-first}
-    \end{subfigure}
-    \begin{subfigure}
+    \end{subfigure}}
+    \vbox{\begin{subfigure}
         \centering
         \includegraphics[width=.8\linewidth]{figures/bg2.png}
         \label{fig:sub-second}
-    \end{subfigure}
+    \end{subfigure}}
     \caption{Artistic show produced by ISS}
     \label{fig:bg}
 \end{figure}
 
 \begin{figure}
     \begin{center}
-        \includegraphics[scale=0.6]{figures/iss_v2_model.png}
+        \includegraphics[scale=0.8]{figures/iss_v2_model.jpg}
     \end{center}
-    \caption{Block Diagram of Illimitable Space System}
+    \caption{Block diagram of Illimitable Space System (ISS)}
     \label{fig:iss-v2}
 \end{figure}
 
@@ -60,23 +60,25 @@ ISSv3~\cite{iss-v3-appy-hour-gem2015, iss-v3-appy-hour-siggraph2015} which
 was designed for virtual reality applications, but out of the scope of this 
 thesis. 
 We mainly focus on ISSv2 which can be conceptually represented 
-by~\autoref{fig:iss-v2}, which is a significant improvement of ISSv1 and is used
+by~\autoref{fig:iss-v2}, which is a significant improvement over
+ISSv1 and is used
 for rapid development of real-time, motion-based graphics applications
-implemented using Processing which is a software built written in Java.
+implemented using Processing which is a software sketchbook for visual arts written in Java.
 
 \section{Limitations of ISSv2}
 \label{sec:intro-lim-issv2}
 
 When we have more chances to do more performances in different places,
 we found that sometimes the stage given to us is too large and cannot be covered
-by only a single camera. It restricts us to design the performance within a
-limited space, which is actually conflicting with our project's name, 
+by only a single camera \cite{iss-ascension-dance-show-2014, 
+iss-gray-zone-dance-show-2015}. It restricts us to design the performance 
+within a limited space, which is actually conflicting with our project's name, 
 Illimitable Space System.
-Also, recently the price of consuming level depth camera has become
+Also, recently the price of consumer-level depth camera has become
 much cheaper. In the market, there are different kinds of depth cameras
 being manufactured (like Kinect v1, Kinect v2 and RealSence) and these cameras
-become more and more powerful (higher speed, frame rate, resolution, larger
-bandwidth and etc). But ISSv2 is hardware-dependent, it can only work with 
+have become more and more powerful (higher speed, frame rate, resolution, larger
+bandwidth and etc). But ISSv2 is hardware-dependent, as it can work only with 
 Kinect v1 which is kind of out of date now.
 
 Under such a situation, we started to think that if one camera is
@@ -86,28 +88,30 @@ better performance without space limitation.
 By using more than one camera, a problem comes to our mind naturally: How can
 we identify the same person across different cameras since we need to track them
 and apply specific visual effects on certain actors?
-From this point, developing a system that can track people through multiple
+From this point, developing a system that can track people across multiple
 cameras becomes essential.
 This idea can not only benefit us but also the security-and-protection industry
-or even the police department. Since with such a system, you can identify a
-specific target (like suspect) across multiple cameras if you have captured it
-in any one of your cameras.
+or even the police department. Since with such a system, one can identify a
+specific target (like suspect) across multiple cameras if he/she is captured by 
+any of the cameras.
 
 In order to catch up with the device evolution, we would like to move from 
 older devices to the latest models. But we don't want to discard our previous 
 compatibility while evolving to new technologies. So how to enable our previous 
-work to be compatible with various kinds of cameras is also a challenge for us.
+work to be compatible with various kinds of cameras is also a challenge in our 
+works.
 
 \section{Research Problem}
 \label{sec:intro-pbstat}
 
-From the situation we described above, our research can be
+From the situation described above, our research tasks can be
 intuitively divided into two parts: 
 (1) person re-identification and
-(2) depth camera abstraction.
+(2) camera abstraction.
 Person re-identification (ReID) recently is a hot research topic in the
 computer vision community. It requires the system to identify the same person
-across different cameras, which can be broken down into three components:
+across different cameras, which can be further broken down into three 
+components:
 
 \begin{itemize}
     \item person detection
@@ -116,32 +120,34 @@ across different cameras, which can be broken down into three components:
 \end{itemize}
 
 If we have a fast enough system, we don't explicitly need person tracking.
-Instead, we perform person detection on each coming frame from the camera which
+Instead, we can perform person detection on each coming frame 
+from the camera which
 is functionally equivalent to person tracking. Under this consideration, we
 omit person tracking in this thesis.
-For device encapsulation, we  currently focus on the total of three kinds of
-cameras: Kinect v1, Kinect v2 and RealSense D435 and we also make sure that when
-a new device needs to be appended, the process will be simple and
-implementer-friendly as well as having no side-effect with the existing devices.
+For device encapsulation, we focus on the total of three kinds of
+cameras: Kinect v1, Kinect v2 and RealSense D435, and will ensure that when
+a new device needs to be appended, the process will be simple, easy to 
+implement, and will have no side-effect with the existing devices.
 
 In the following subsections, we are going to formulate our
 research problem scientifically. For person detection, we enlarge our target
-set not only on the person but for all kinds of objects and the same applies to
-person retrieval. So we end up with object detection and object retrieval.
+set not only for the person but also for all kinds of objects and the same 
+applies to person retrieval. 
+So we end up with object detection and object retrieval.
 
 \subsection{Object Detection}
 
-In object detection, you are given an image $I$ and a list of classes $C$ which
-the objects appear in $I$ belong to. Your task is to detect instances of the 
+In object detection, we are given an image $I$ and a list of classes $C$ which
+the objects appear in $I$ belong to. The task is to detect instances of the 
 object within $I$ belong to a specific class in $C$.
-For each instance $i$, you need to output first $c \in C$ which represents 
+For each instance $i$, we need to output first $c \in C$ which represents 
 which class this instance belongs to and second a bounding box $B$ to indicate 
-the location of that instance with respect to the image $I$.
+the location of that instance in image $I$.
 
 \subsection{Object Retrieval}
 
-In object retrieval, you are given a query image $q$ and a set of gallery images
-$G$. Your task is to find the
+In object retrieval, we are given a query image $q$ and a set of gallery images
+$G$. The task is to find the
 most likely image $g \in G$ for which both $q$ and $g$ represent the same 
 instance $instance(q) = instance(g)$.
 
@@ -158,13 +164,13 @@ mathematically expressed as:
 $
 \exists f_n \in F, \forall (d_i, d_j) \in D
 \Longrightarrow f_{n}(d_i) = f_{n}(d_j)
-$
+$.
 
 \section{Motivation and Goal}
 \label{sec:intro-mot-goal}
 
 The original design of ISSv2 targets to create music visualization, visual
-effects and interactive documentary easily for artistic people who don't have 
+effects, and interactive documentary easily for artistic people who don't have 
 extensive knowledge in computer science and programming. So the architecture and
 the design needs to be relatively simple. The main focus should be given to visual effect
 design and how to display them to the audiences.
@@ -190,26 +196,30 @@ these two works to be accessed via the same set of APIs which means all these
 three works should somehow be operated within the same operational software
 framework.
 
-Up to now, we should be able to summarize our goal:
+%Up to now, we should be able to summarize our goal:
+Here is a summary of our goal:
 \textbf{
     we would like to design and implement a system that provides a way to
 	abstract different kinds of depth cameras and the functionality of person
-	re-identification. It should also leave space for other modules to be
-	integrated with good extensibility and usability.
+	re-identification. 
+%    It should also leave space for other modules to be
+%	integrated with good extensibility and usability.
+    It should also support integrating with other modules and enjoy good
+    extensibility and usability.
 }
 
 \section{Scenario and Requirement}
 \label{sec:intro-scen-req}
 
 With the goal we defined above, in this section we will give a few concrete
-use-case scenarios we expect to achieve from the final production of this thesis.
+use-case scenarios we expect to achieve in this thesis.
 These scenarios, in their own way, highlight one or more problems that have not
 been solved by any existing solution yet. We not only aim at solving these problems
 individually, but also to provide a general solution to all these problems
 under the same software solution.
 We analyze these scenarios one by one, then extract both functional and
-non-functional requirements, which becomes the concrete implementation goal of
-our solution.
+non-functional requirements (\acrshort{fr} and \acrshort{nfr}), which becomes 
+the concrete implementation goal of our solution.
 
 \subsection{Device Switch and New Device Addition}
 \label{sec:intro-sq-dev}
@@ -259,18 +269,18 @@ algorithm based on it. Next time, when a new device comes, what we need to do
 will be just the transformation from the device-specific data structure to our
 common one. If some other demands like background removal are required, we can
 always follow the same pattern to solve them. We call all these common data 
-structures and common algorithms the back-end of the system.
+structures and common algorithms as the back-end of the system.
 
 This usage scenario can be abstractly summed-up as the following, which becomes
 one of our requirements:
 
 \begin{itemize}
-    \item \textbf{FR3}: The solution shall be able to serve as a back-end of the
-	existing ISS system providing a set of commonly used data structures and
-	functionalities for reusability.
+    \item \textbf{FR3}: The solution shall be able to serve as a back-end 
+    for the existing ISS system providing a set of commonly used data 
+    structures and functionalities for reusability.
 \end{itemize}
 
-\subsection{Person Re-identification}
+\subsection{Person Re-identification (\acrshort{reid})}
 \label{sec:intro-sq-reid}
 
 Imagine a scenario where there is a show given by two actors, and we would like
@@ -299,10 +309,10 @@ one of our requirements:
 In ISSv2, we have some visual effects designed specifically for the human 
 skeleton. But because of the underlying dependencies issue, we can only obtain 
 the skeleton data from Kinect v1 camera.
-In order to break the restriction from the specific device-oriented
+In order to lift the restriction from the specific device-oriented
 dependencies, we need to make the skeleton extraction process
 device-independent.
-It means we should be able to extract skeleton data from a variety
+This means that we should be able to extract skeleton data from a variety
 of devices and convert them into the common skeleton data format which is
 simply a set of points in a picture. A possible scenario can be described as
 the following: a performance director would like to make use of some
@@ -319,8 +329,8 @@ one of our requirements:
 \subsection{Interaction with Other Modules}
 \label{sec:intro-sq-inta}
 
-As mentioned before, there are a gesture and facial recognition modules being
-developed concurrently to our research. Theses modules should be able to use
+As mentioned before, there are gesture and facial recognition modules being
+developed concurrently in our research. Theses modules should be able to use
 the infrastructure (e.g. device abstraction) we proposed in this thesis. Also
 the module we develop here should be able to communicate with these two other
 modules from other system developers. Imagine a scenario where the visual
@@ -340,31 +350,35 @@ one of our requirements:
 \subsection{Non-functional Requirements}
 \label{sec:intro-non-func-req}
 
-By analyzing the scenarios we described previously, we found that in order to
+By analyzing the scenarios described above, we found that in order to
 achieve them our solution must meet the following non-functional requirements:
 
 \textbf{Real-time Response:} 
-\textit{The system should be able to process the task in a speed that at least 
-24 frames per second (FPS).}
+\textit{The system should be able to process the task at a speed of at least 
+10 frames per second (FPS).}
 
-As our solution want to address covering a large range of area on the stage 
-during a live performance issue. It is extremely important for our solution to 
+As our solution aims to address covering a large area on the stage 
+during a live performance issue, it is extremely important for our solution to 
 keep the whole person re-identification process in real-time since it is a live 
 show and the audiences are watching it on the scene. If we cannot make it in 
 real-time, our solution is actually useless, which means it is a hard 
-constraint for our solution.
+constraint for our solution. 
+According to \cite{wikipedia-frame-rate}, the human visual system 
+can process 10 to 12 images per second (FPS) and perceive them 
+individually, while higher rates are perceived as motion. So we set 10 FPS 
+to be our baseline.
 
 \textbf{Accuracy:} 
-\textit{The system should be able to detect the appearance of person and 
+\textit{The system should be able to detect the appearance of a person and 
 re-identify them across multiple cameras with an accuracy comparable to the 
-state of the art solutions.}
+state-of-the-art solutions.}
 
 While keeping the real-time requirement, we also need to make sure our solution
-provide a considerable accuracy for both the detection and retrieval processes.
+provides a considerable accuracy for both the detection and retrieval processes.
 In our case, since we are in the context of real-time artistic performance, it
 is hard to state an acceptable base line for it. But we should try our best to
-achieve a higher accuracy making sure our solution comparable to the state of
-the art solution existing in each of their community.
+achieve a higher accuracy making sure our solution is comparable to existing 
+state-of-the-art solutions in their respective communities.
 
 \textbf{Extensibility:}
 \textit{The ability of a software system to acquire and integrate new
@@ -372,14 +386,13 @@ components.}
 
 As the devices will become more and more multitudinous and the algorithms for
 person re-identification will be more and more advanced, it becomes essential
-to design a solution with great extensibility that later on we still
-be able used to add or integrate more devices and algorithms into our existing
+to design a solution with great extensibility that later on will still
+be usable to add or integrate more devices and algorithms into our existing
 solution smoothly and easily.
 
 \textbf{Usability:}
 \textit{The ability of a software system to effectively provide the expected
-functionalities to the user, in a manner that is as intuitive and the least
-strenuous or problematic as possible.}
+functionalities to the user, further more, it should be also easy to use.}
 
 For any kind of software system, in order to attract the users and/or 
 programmers, as the software solution designer we should try our best to 
@@ -387,15 +400,12 @@ provide simple, meaningful and understandable APIs.
 That means the name of our APIs, the required parameters for each functionality
 and the final result from the return value should be concise, compact and
 logically make sense. For the experienced users in the same area, they should
-be able to move from other similar solutions to ours without putting too much
-effort.
-In other words, the learning curve should be as smooth as possible
-and necessary documentation and comments should be provided properly.
+be able to move from other similar solutions to ours without much effort.
 
 \section{Contribution}
 \label{sec:intro-contrib}
 
-Our contribution is four-fold:
+Our contribution is five-fold:
 
 \begin{itemize}
     \item We offer an overall architecture that allows users to perform
@@ -455,7 +465,7 @@ Our contribution is four-fold:
 
 In this chapter, we introduced our research background, pointed out the
 existing limitations, and stated the research problems giving them clear
-scientific definitions and restricted our scope.
+definitions and restricted our scope.
 In the following chapters, the thesis will be structured in the way listed
 below:
 
@@ -463,16 +473,15 @@ below:
     \item In \autoref{chap:RelatedWork}, we will review existing literature
     related to our research problem and also the available software which may be
     useful for our implementation. In the summary section of this chapter,
-    based on our need, we will select one as our target detector and recognizer
-    then stick with them in our implementation described in the following
+    based on our needs, we will select one and switch to it as our target 
+    detector and recognizer in our implementation described in the following
     chapters.
 
-    \item In \autoref{chap:fw-design} and \autoref{chap:fw-inst}, with all
-    needed background in hand from the previous chapter, we will propose our
-    framework solution in detail in a top-down manner. 
+    \item In \autoref{chap:fw-design} and \autoref{chap:fw-inst}, we will 
+    propose our framework solution in detail in a top-down manner. 
     Precisely, in \autoref{chap:fw-design} we describe our design of the
     solution framework and in \autoref{chap:fw-inst} we describe how it has been
-    instantiated to satisfy our need.
+    instantiated to satisfy the needs.
 
     \item In \autoref{chap:fw-app}, we will describe the applications built on
     top of our proposed solution, which becomes a proof of concept that our

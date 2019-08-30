@@ -3,15 +3,68 @@
 \index{Conclusion and Future Work}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In this chapter, we summarize what we have been done within this
-thesis, and acknowledged the known limitations we have currently.
+In this chapter, we summarize what we have done within this
+thesis, and acknowledge the known limitations we have currently.
 At the end, we point out some potential research paths for other
-researchers who would like to work on top this thesis.
+researchers who would like to follow up on our work.
 
 
-\section{Summary}
+\section{Conclusion}
 \label{sec:Conclusion-summary}
 
+In this thesis, we proposed a solution that can provide an abstract
+layer for various kinds of depth cameras and the functionality of tracking
+the same person across multiple cameras achieving the goal we set up in 
+\autoref{sec:intro-mot-goal}.
+The solution was designed and implemented in a software framework manner, 
+since the key features of a framework perfectly fit to our need as explained
+in \autoref{sec:fw-design-why}.
+Precisely, it contains a core framework which serves as infrastructure and three 
+specialized frameworks for the detection, recognition and tracking tasks in general.
+
+Within the framework's core, we provided modules for device abstraction,
+cross-language invocation, pipeline execution, framework-level common
+data structure and result visualization.
+As mentioned in \autoref{sec:fw-design-core}, the device abstraction currently
+supports accessing data via a common API for three different kinds of 
+cameras, Kinect v1, Kinect v2 and RealSense D435. The cross-language module 
+allows the programs written in C/C++ to communicate with the one written in
+Python which is a common case for deep learning-based algorithms.
+The pipeline module enables the inversion of control feature of our framework
+freeing the application developer from handling the complex but useless 
+intermediate results. The common data structure defines the data format 
+exchanged within the framework while the viewer module provides visualized
+results for the users.
+
+For our specific demand, we instantiated the general detector, recognizer 
+and tracker for person detection, person recognition and skeleton tracking
+tasks.
+For the detector instantiation described in \autoref{sec:fw-inst-detector}, 
+we re-trained the YOLO v3 network, reducing its
+scope from object detection to person detection achieving 76\% mAP. 
+For the person recognizer instantiation described in
+\autoref{sec:fw-inst-recoginzer}, we combined the identification model with the 
+triplet model employing a ResNet-50 as backbone network to train a model 
+achieving 90\% top-1 accuracy.
+For the skeleton tracker instantiation described in \autoref{sec:fw-inst-tracker},
+we ported the implementation from NiTE2 to our solution which can perform
+skeleton tracking in real-time without the use of a GPU.
+
+To prove that our solution can satisfy the proposed scenarios listed 
+in \autoref{sec:intro-scen-req}, we created concrete applications 
+employing our framework instance in \autoref{chap:fw-app} and evaluated them in 
+both the framework design and algorithm performance aspects. The result shown that all 
+the requirements were fulfilled. In the context of performance, our 
+solution, while keeping the real-time response requirement, can still achieve
+a comparable performance among the currently available approaches. The person 
+detector is only 6\% less than the original YOLO v3 in mAP metric and 
+the person ReID model is ranked $9^{th}$ among all existing methods in the 
+context of CMC and mAP metrics, more details were stated in
+\autoref{sec:Eval-reid-app}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{comment}
 We have shown, through the result of our evaluation \autoref{chap:Evaluation}
 and the design and implementation of our solution
 \autoref{chap:Design-and-Impl}, that
@@ -55,6 +108,7 @@ device abstraction as well as other infrastructure and a model can achieve
 about 90\% top 1 accuracy in ReID task. Then integrate the model into a
 pipeline under this framework to perform pedestrian detection and person
 re-identification in real time.}
+\end{comment}
 
 \section{Limitations}
 \label{sec:Conclusion-limitation}
@@ -62,40 +116,42 @@ re-identification in real time.}
 Even though the proposed solution in this thesis reach the goal we setup in
 \autoref{sec:intro-mot-goal} and fulfill the requirement we listed in
 \autoref{sec:intro-scen-req}, we have to admit that there are still a few
-limitations exist currently in our solution.
+limitations that currently exist in our solution:
 
 \begin{itemize}
-	\item Our ReID application currently requires us to prepare database images
+    \item Our solution currently has not been tested with a real show yet.
+    
+	\item Our ReID application currently requires us to prepare an image database
 	in advance and put them under a specific directory. There is no interface
-	for user to capture database image on-the-fly.
+	for the user to capture a database image on-the-fly.
 
-	\item Our green screen application currently need the user to select the
+	\item Our green screen application currently requires the user to select the
 	filtering distance. Since we already have skeleton tracking, if we can
-	combine them together we actually can achieve green screen automatically by
+	combine them together we actually can achieve the green screen functionality automatically by
 	making use of the depth values we get from the joint pixels.
 
-	\item Our cameras calibration application now can only calibrate the color
-	image, but most of the depth sensor have and IR camera. Since the image
-	captured by the IR cameras is too bright that the corner detector cannot
-	find the target easily. We should either add pre-processing step in order
-	to get usable image or create different methods to calibrate the IR camera
+	\item Our camera calibration application now can only calibrate color
+	images, but most of the depth sensor have an IR camera. Since the image
+	captured by the IR cameras is too bright, the corner detector cannot
+	find the target easily. We should either add a pre-processing step in order
+	to get a usable image or create different methods to calibrate the IR camera
 	because the intrinsic and extrinsic matrices are useful for image alignment.
 
 	\item Our current skeleton tracking application is based on a third-party
 	library, we don't have skeleton extraction algorithm based on our
 	framework's common data structure yet. It will restrict us that the
 	skeleton tracking application can only apply to a subset of cameras which
-	is not our original goals.
+	is not our original goal.
 
-	\item Our current ReID model mostly based on the appearance of the detected
-	person, with such a model, it can work fine on the normal environment. But
-	when put it under some special environments like no or only few light or
-	tracking object which moves in a high speed. Our model may likely fail.
+	\item Our current ReID model is mostly based on the appearance of the detected
+	person. With such a model, it can work fine on a normal environment. But
+	when put under some special environments like no or only dim lighting or
+	tracking object which moves in a high speed, our model may likely fail.
 
-	\item Our ReID model currently is trained on a single dataset which make a
-	lot of sense in academic research. But as a engineering production we
-	actually focus on the performance which can be improved if we train the
-	model on multiple dataset jointly to learn more generic features.
+	\item Our ReID model is currently trained on a single dataset which is minimally 
+	acceptable in order to measure our performance in an academic research context. 
+	But for real-life production we would need to focus on the performance by training the
+	model on multiple datasets jointly to learn more generic features.
 
 	\item Our framework requires a lot of dependencies, the environment
 	configuration process for the framework developer is currently a little bit
@@ -106,35 +162,35 @@ limitations exist currently in our solution.
 \section{Future Work}
 \label{sec:Conclusion-future-work}
 
-The research presented in this thesis actually is just the starting point of
+The research presented in this thesis constitutes a starting point for
 the OpenISS framework. The final goal is to make it can not only support our
-real-time performance production but also can serve as a research platform for
+real-time performance production but also that it can serve as a research platform for
 people in computer vision, pattern recognition, deep learning and game
 development. Below, we list some additional features that we are working on or
 plan to work on.
 
-\textbf{Java API wrapper:} As discuss in \autoref{sec:Impl-fw-cross-lang}, our
+\textbf{Java API wrapper:} As discuss in \autoref{sec:fw-inst-impl}, our
 framework was written in C/C++, but our production ISSv2 was written in Java
-and on top of Processing. In order to use OpenISS as the new back-end, we have
+and on top of the Processing visual arts toolbox. In order to use OpenISS as the new back-end, we have
 to provide a Java wrapper for our APIs. This work is ongoing and partially done
 by our labmates Yuhao Mao, Jashanjot Singh and Chao Wang.
 
 \textbf{More devices support:} At this moment, we only support three kinds of
-device. But we always keep our eyes on the market, recently the new version of
+devices. But we always keep our eyes on the market, recently the new version of
 Kinect named Azure Kinect has been released, as well as two new cameras named
 D435i and T265 from RealSense.
 At the same time, RealSense also include OpenNI2 into their SDK which enable us
 to apply our skeleton tracking implementation described in
 \autoref{sec:Impl-fw-app-skt} on all the RealSense cameras.
 
-\textbf{Comparison platform: } One of our goal is to make OpenISS can serve as
-an algorithms comparison framework which define a bunch of metrics for various
-research problem accordingly and enable the users to compare different
-algorithms under the single-variable-setting. Currently, we have CMC and mAP
-metrics for ReID task, we already achieved cross datasets validation. We still
+\textbf{Comparison platform: } One of our goal is to make OpenISS to serve as
+an algorithms comparison framework which defines a group of  metrics for various
+research problem accordingly and enables the users to compare different
+algorithms under the a single controlled environment. Currently, we have the CMC and mAP
+metrics for the ReID task, we already achieved cross-datasets validation. We still
 plan to add more support for other tasks.
 
-\textbf{Full-platform support:} Currently, our framework only work with Linux
+\textbf{Full-platform support:} Currently, our framework only works with Linux
 (Ubuntu distribution) and MacOS (without GPUs features, that is due to the
 hardware and their drivers limitation). We plan to add full support for Windows
 since it still the most popular OS in the world and most of our dependencies
@@ -142,11 +198,14 @@ can be ported to it now.
 
 \textbf{Auto installation:} The installation process our the framework
 currently is manually and a little bit tricky. Some efforts have been made to
-it but only for Ubuntu System. We plan to script the installation process in
+automate the installations, but only for the Ubuntu System. We plan to script the installation process in
 CMake to enable dependencies downloading, building and installing automatically
 for all platforms.
 
-
+\textbf{Test with a real artistic show:} Our solution currently has not been
+tested with a real live artistic show yet, we would like to integrate 
+our solution with a real show to see how well it can perform during the 
+performance.
 % EOF
 
 

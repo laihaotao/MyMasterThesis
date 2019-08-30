@@ -1,6 +1,7 @@
 \usepackage[latin1]{inputenc}
 \usepackage{graphicx}
 \usepackage{subfigure}
+\usepackage{comment}
 \usepackage{latexsym}
 \usepackage{makeidx}
 \usepackage{style/cuthesis}
@@ -102,3 +103,9 @@
 	\def\subparagraphautorefname{Subparagraph}%
 	\def\algorithmautorefname{Algorithm}%
 }
+
+\usepackage{savesym}
+\savesymbol{dimdef}
+\usepackage[nonumberlist, acronym]{glossaries}
+\restoresymbol{GLO}{dimdef}
+\makenoidxglossaries

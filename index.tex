@@ -3,33 +3,34 @@
 %
 %**** Import packages setup. 
 \input{common/setup}
-% Make the list of abreviations.
+
+%-- define abbrs.
+\input{abbr/abbrs}
 \makenomenclature
+
 \makeindex
- 
+
 %%
 %% Authorship
 %%
 \author{Haotao Lai}
 \title
 {
-	An ISS Framework Specialization for Person Re-identification
+	An OpenISS Framework Specialization for 
+    Deep Learning-based Person Re-identification
 }
 \degree{Master of Science (Computer Science)}
 \dept{Computer Science and Software Engineering}
+
+
 
 \begin{document}
 
 %%%%%%%%%%%%%%%%%%%% <Thesis Header> %%%%%%%%%%%%%%%%%%%%%%%%
 \input{abstract/abstract}
 \input{common/acknowledgments}
- 
- 
-%%%%%%%%%%%%%%%%%%%% <Thesis Body>   %%%%%%%%%%%%%%%%%%%%%%%%
-%-- Abbrs.
-%\input{abbr/abbrs}
-%\printnomenclature
 
+%%%%%%%%%%%%%%%%%%%% <Thesis Body>   %%%%%%%%%%%%%%%%%%%%%%%%
 \input{chapters/introduction}
 \input{chapters/related_work}
 \input{chapters/framework_design}
